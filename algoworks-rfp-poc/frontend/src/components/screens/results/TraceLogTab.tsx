@@ -39,7 +39,7 @@ export function TraceLogTab({ rfpId, traceLog: initialTraceLog }: TraceLogTabPro
     <div className="td-trace-tab">
       <div className="td-trace-tab__toolbar">
         <Button weight="secondary" icon={<RefreshCw />} onClick={handleRefresh} disabled={isRefreshing}>
-          {isRefreshing ? 'Refrescando…' : 'Refresh trace'}
+          {isRefreshing ? 'Refrescando…' : 'Actualizar trace'}
         </Button>
         {error && <span className="text-body-sm td-trace-tab__error">{error}</span>}
       </div>
@@ -47,11 +47,11 @@ export function TraceLogTab({ rfpId, traceLog: initialTraceLog }: TraceLogTabPro
       <table className="td-trace-tab__table">
         <thead>
           <tr>
-            <th>Node</th>
-            <th>Timestamp</th>
-            <th>Duration</th>
+            <th>Nodo</th>
+            <th>Hora</th>
+            <th>Duración</th>
             <th>Tokens</th>
-            <th>Reasoning</th>
+            <th>Razonamiento</th>
           </tr>
         </thead>
         <tbody>

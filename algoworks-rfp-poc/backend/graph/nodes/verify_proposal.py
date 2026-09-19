@@ -17,8 +17,9 @@ _NO_LLM_CALL_REASONING = (
     "inexistentes antes de esta etapa."
 )
 _NO_CITATIONS_REASONING = (
-    "Sección introductoria o de cierre sin citas; no hace afirmaciones "
-    "factuales sobre Algoworks y por lo tanto no requiere verificación."
+    "Sección de encuadre, plantilla comercial o de cierre sin citas; no hace "
+    "afirmaciones factuales verificables sobre Algoworks y por lo tanto no "
+    "requiere verificación NLI."
 )
 
 
@@ -105,11 +106,12 @@ def make_verify_proposal_node(
             reasoning=(
                 "Las secciones con citas alucinadas se marcan automáticamente "
                 "como no soportadas sin llamar al LLM; las secciones sin citas "
-                "(carta de presentación, cierre) se consideran soportadas por "
-                "defecto al no hacer afirmaciones factuales; el resto se "
-                "verifica con un prompt tipo NLI. Si alguna sección no está "
-                "soportada y quedan reintentos disponibles, se recompone el "
-                f"documento completo (máx. {max_retries} reintento(s))."
+                "(carta de presentación, cierre, plantillas comerciales como "
+                "equipo/SLA/precio) se consideran soportadas por defecto al no "
+                "hacer afirmaciones factuales; el resto se verifica con un "
+                "prompt tipo NLI. Si alguna sección no está soportada y quedan "
+                "reintentos disponibles, se recompone el documento completo "
+                f"(máx. {max_retries} reintento(s))."
             ),
             duration_ms=(time.perf_counter() - started_at) * 1000,
             tokens=accumulator.total(),

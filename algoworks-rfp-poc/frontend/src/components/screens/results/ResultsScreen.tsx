@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import type { PipelineResult } from '../../../api/types'
+import type { PipelineResult, ProposalDocument } from '../../../api/types'
 import { Badge } from '../../ui/Badge'
 import { Button } from '../../ui/Button'
 import { ConsistencyBanner } from '../../ui/ConsistencyBanner'
@@ -9,28 +9,41 @@ import { UnderlineTabs } from '../../ui/UnderlineTabs'
 import type { TabOption } from '../../ui/SegmentedTabs'
 import { TopBar } from '../../layout/TopBar'
 import { formatCost, formatDuration, formatTokens } from '../../../utils/format'
+import { buildPipelineResultMarkdown, downloadTextFile } from '../../../utils/exportDocument'
 import { buildSourceIndex } from '../../../utils/sourceIndex'
 import { ResponseTab } from './ResponseTab'
 import { SourcesTab } from './SourcesTab'
 import { RequirementsTab } from './RequirementsTab'
 import { TraceLogTab } from './TraceLogTab'
+import { ProposalTab } from './ProposalTab'
 import './ResultsScreen.css'
 
 interface ResultsScreenProps {
   result: PipelineResult
+  proposal: ProposalDocument | null
+  isComposingProposal: boolean
+  proposalError: string | null
+  onRegenerateProposal: () => void
 }
 
-export function ResultsScreen({ result }: ResultsScreenProps) {
+export function ResultsScreen({
+  result,
+  proposal,
+  isComposingProposal,
+  proposalError,
+  onRegenerateProposal,
+}: ResultsScreenProps) {
   const [activeTab, setActiveTab] = useState('response')
   const [selectedChunkId, setSelectedChunkId] = useState<string | null>(null)
 
   const sourceIndex = useMemo(() => buildSourceIndex(result), [result])
 
   const tabs: TabOption[] = [
-    { id: 'response', label: 'Response' },
-    { id: 'sources', label: `Sources (${sourceIndex.length})` },
-    { id: 'requirements', label: 'Key Requirements' },
-    { id: 'trace', label: 'Trace Log' },
+    { id: 'response', label: 'Respuesta' },
+    { id: 'sources', label: `Fuentes (${sourceIndex.length})` },
+    { id: 'requirements', label: 'Requisitos clave' },
+    { id: 'proposal', label: isComposingProposal ? 'Propuesta consolidada (generando…)' : 'Propuesta consolidada' },
+    { id: 'trace', label: 'Registro de trazabilidad' },
   ]
 
   const lastEvent = result.trace_log.at(-1)
@@ -48,28 +61,31 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
   return (
     <div className="td-results">
       <TopBar
-        title={`RFP Response: ${result.rfp_id}`}
+        title={`Respuesta RFP: ${result.rfp_id}`}
         meta={meta}
         right={
           <>
-            <Badge tone="success">Completed</Badge>
-            <Button weight="secondary" disabled title="No hay endpoint de exportación en la API">
-              Download
+            <Badge tone="success">Completado</Badge>
+            <Button
+              weight="secondary"
+              onClick={() => downloadTextFile(`${result.rfp_id}.md`, buildPipelineResultMarkdown(result))}
+            >
+              Descargar
             </Button>
             <Button weight="primary" disabled title="No hay endpoint de compartir en la API">
-              Share
+              Compartir
             </Button>
           </>
         }
       />
 
       <div className="td-results__metrics">
-        <MetricTile label="Duration" value={formatDuration(result.metrics.total_duration_ms)} />
-        <MetricTile label="Total tokens" value={formatTokens(result.metrics.total_tokens.total_tokens)} />
-        <MetricTile label="Estimated cost" value={formatCost(result.metrics.total_tokens.estimated_cost_usd)} />
-        <MetricTile label="Retries used" value={String(result.metrics.retries_used)} />
+        <MetricTile label="Duración" value={formatDuration(result.metrics.total_duration_ms)} />
+        <MetricTile label="Tokens totales" value={formatTokens(result.metrics.total_tokens.total_tokens)} />
+        <MetricTile label="Costo estimado" value={formatCost(result.metrics.total_tokens.estimated_cost_usd)} />
+        <MetricTile label="Reintentos usados" value={String(result.metrics.retries_used)} />
         <MetricTile
-          label="Hallucinated citations caught"
+          label="Citas alucinadas detectadas"
           value={String(result.metrics.hallucinated_citations_caught)}
         />
       </div>
@@ -95,6 +111,14 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
           <SourcesTab sourceIndex={sourceIndex} selectedChunkId={selectedChunkId} onSelectChunk={setSelectedChunkId} />
         )}
         {activeTab === 'requirements' && <RequirementsTab result={result} />}
+        {activeTab === 'proposal' && (
+          <ProposalTab
+            proposal={proposal}
+            isLoading={isComposingProposal}
+            error={proposalError}
+            onRegenerate={onRegenerateProposal}
+          />
+        )}
         {activeTab === 'trace' && <TraceLogTab rfpId={result.rfp_id} traceLog={result.trace_log} />}
       </div>
 

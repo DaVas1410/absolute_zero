@@ -32,11 +32,11 @@ describe('buildSourceIndex', () => {
       ],
       retrieved: {
         req_001: [
-          { chunk_id: 'chunk_002', score: 0.7, justification: 'j2', source: 's2' },
-          { chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1' },
+          { chunk_id: 'chunk_002', score: 0.7, justification: 'j2', source: 's2', text: 't2' },
+          { chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1', text: 't1' },
         ],
         // chunk_001 reappears for req_002 - must not get a second number.
-        req_002: [{ chunk_id: 'chunk_001', score: 0.5, justification: 'j1-b', source: 's1' }],
+        req_002: [{ chunk_id: 'chunk_001', score: 0.5, justification: 'j1-b', source: 's1', text: 't1' }],
       },
       drafts: {
         req_001: { req_id: 'req_001', text: '', cited_chunks: ['chunk_002'], reasoning: '', citation_similarities: [], overall_similarity: 0 },
@@ -57,8 +57,8 @@ describe('buildSourceIndex', () => {
         { req_id: 'req_002', text: 'b', section_target: 'capacidades_tecnicas' },
       ],
       retrieved: {
-        req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1' }],
-        req_002: [{ chunk_id: 'chunk_001', score: 0.5, justification: 'j1', source: 's1' }],
+        req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1', text: 't1' }],
+        req_002: [{ chunk_id: 'chunk_001', score: 0.5, justification: 'j1', source: 's1', text: 't1' }],
       },
       drafts: {
         req_001: { req_id: 'req_001', text: '', cited_chunks: ['chunk_001'], reasoning: '', citation_similarities: [], overall_similarity: 0 },
@@ -76,7 +76,7 @@ describe('buildSourceIndex', () => {
     const result = minimalResult({
       requirements: [{ req_id: 'req_001', text: 'a', section_target: 'experiencia_previa' }],
       retrieved: {
-        req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1' }],
+        req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1', text: 't1' }],
       },
       drafts: {
         req_001: { req_id: 'req_001', text: '', cited_chunks: [], reasoning: '', citation_similarities: [], overall_similarity: 0 },
@@ -95,7 +95,7 @@ describe('citationNumberMap', () => {
       minimalResult({
         requirements: [{ req_id: 'req_001', text: 'a', section_target: 'experiencia_previa' }],
         retrieved: {
-          req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1' }],
+          req_001: [{ chunk_id: 'chunk_001', score: 0.9, justification: 'j1', source: 's1', text: 't1' }],
         },
       }),
     )

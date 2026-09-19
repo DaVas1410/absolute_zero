@@ -43,7 +43,7 @@ export function ResponseTab({ result, sourceIndex, selectedChunkId, onSelectChun
       </div>
 
       <div className="td-response-tab__sources">
-        <p className="text-h3 td-response-tab__sources-title">Sources ({citedEntries.length})</p>
+        <p className="text-h3 td-response-tab__sources-title">Fuentes ({citedEntries.length})</p>
         {citedEntries.length > 6 && (
           <input
             type="search"

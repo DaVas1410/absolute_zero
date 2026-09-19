@@ -105,10 +105,10 @@ export function RequirementCard({
 
       <div className="td-req-card__feedback">
         <Button weight="secondary" onClick={() => handleFeedback(true)}>
-          Accept
+          Aceptar
         </Button>
         <Button weight="ghost" onClick={() => handleFeedback(false)}>
-          Reject
+          Rechazar
         </Button>
         {feedbackError && (
           <Badge tone="caution">{feedbackError}</Badge>

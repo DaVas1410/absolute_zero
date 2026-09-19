@@ -1,0 +1,3 @@
+1. El proveedor debe demostrar experiencia previa implementando pipelines de MLOps (registro de modelos y orquestación de reentrenamiento) para clientes de IA/ML.
+2. El proveedor debe describir su capacidad para construir sistemas RAG (retrieval-augmented generation) con bases de datos vectoriales.
+3. El proveedor debe demostrar experiencia en arquitecturas SaaS multi-tenant con facturación por uso (usage-based billing).

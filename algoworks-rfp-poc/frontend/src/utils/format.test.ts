@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatCost, formatDuration, formatPercent, formatTokens } from './format'
+import { formatChunkLabel, formatCost, formatDuration, formatPercent, formatSourceName, formatTokens } from './format'
 
 describe('formatDuration', () => {
   it('renders sub-second durations in whole milliseconds', () => {
@@ -42,5 +42,27 @@ describe('formatPercent', () => {
 
   it('rounds up at the boundary', () => {
     expect(formatPercent(0.995)).toBe('100%')
+  })
+})
+
+describe('formatSourceName', () => {
+  it('strips the extension and replaces underscores/hyphens with spaces', () => {
+    expect(formatSourceName('Capacidades_Tecnicas_Algoworks.md')).toBe('Capacidades Tecnicas Algoworks')
+  })
+
+  it('falls back to a placeholder for an empty source', () => {
+    expect(formatSourceName('')).toBe('Fuente sin nombre')
+  })
+})
+
+describe('formatChunkLabel', () => {
+  it('combines the source name with a "fragmento N" suffix from the trailing chunk_id number', () => {
+    expect(formatChunkLabel('chunk_006', 'Capacidades_Tecnicas_Algoworks.md')).toBe(
+      'Capacidades Tecnicas Algoworks — fragmento 6',
+    )
+  })
+
+  it('falls back to the raw chunk_id when there is no source', () => {
+    expect(formatChunkLabel('chunk_006', '')).toBe('chunk_006')
   })
 })

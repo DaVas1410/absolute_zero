@@ -73,6 +73,16 @@ class _FallbackStructuredRunnable:
             return _fallback_or_raise(primary_error, lambda: self._fallback.invoke(prompt))
 
 
+_MAX_TOKENS_BY_SIZE: dict[str, int] = {
+    # "large" backs compose_proposal, which now generates a full ~12-section
+    # business document in one structured-output call - left at the
+    # provider's own default (unset), a long document was silently
+    # truncated to the first few sections (the JSON schema decoder still
+    # closes valid JSON at the token budget, so no error was ever raised).
+    "large": 8000,
+}
+
+
 def get_chat_llm(size: Literal["small", "large"]) -> FallbackChatModel:
     groq_model = (
         os.environ.get("GROQ_MODEL_SMALL", _DEFAULT_GROQ_MODEL_SMALL)
@@ -81,7 +91,8 @@ def get_chat_llm(size: Literal["small", "large"]) -> FallbackChatModel:
     )
     ollama_model = os.environ.get("OLLAMA_MODEL", "llama3.1")
     ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+    max_tokens = _MAX_TOKENS_BY_SIZE.get(size)
 
-    primary = ChatGroq(model=groq_model, api_key=os.environ.get("GROQ_API_KEY"))
-    fallback = ChatOllama(model=ollama_model, base_url=ollama_base_url)
+    primary = ChatGroq(model=groq_model, api_key=os.environ.get("GROQ_API_KEY"), max_tokens=max_tokens)
+    fallback = ChatOllama(model=ollama_model, base_url=ollama_base_url, num_predict=max_tokens)
     return FallbackChatModel(primary, fallback)

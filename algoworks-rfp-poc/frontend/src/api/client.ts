@@ -1,4 +1,4 @@
-import type { ApiErrorBody, PipelineResult, TraceEvent } from './types'
+import type { ApiErrorBody, PipelineResult, ProposalDocument, TraceabilityReport, TraceEvent } from './types'
 
 export const API_BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8000'
@@ -19,10 +19,13 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
+  // FormData bodies (file uploads) must NOT get an explicit Content-Type -
+  // the browser sets the multipart boundary itself.
+  const isFormData = init?.body instanceof FormData
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: { 'Content-Type': 'application/json' },
       ...init,
+      headers: isFormData ? init?.headers : { 'Content-Type': 'application/json', ...init?.headers },
     })
   } catch (err) {
     throw new ApiError(0, 'Connection Error', err instanceof Error ? err.message : String(err))
@@ -70,4 +73,19 @@ export function submitFeedback(reqId: string, accepted: boolean): Promise<{ stat
     method: 'POST',
     body: JSON.stringify({ accepted }),
   })
+}
+
+export function processRfpPdf(rfpId: string, file: File): Promise<PipelineResult> {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('rfp_id', rfpId)
+  return request<PipelineResult>('/rfp/process/pdf', { method: 'POST', body: form })
+}
+
+export function composeProposal(rfpId: string): Promise<ProposalDocument> {
+  return request<ProposalDocument>(`/rfp/${encodeURIComponent(rfpId)}/compose`, { method: 'POST' })
+}
+
+export function getTraceabilityReport(rfpId: string): Promise<TraceabilityReport> {
+  return request<TraceabilityReport>(`/rfp/${encodeURIComponent(rfpId)}/traceability-report`)
 }

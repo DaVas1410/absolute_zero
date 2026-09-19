@@ -87,3 +87,36 @@ def test_finalize_compose_leaves_fully_valid_sections_untouched():
     assert result["metrics"].sections_supported == 1
     assert result["metrics"].fully_cited_count == 1
     assert result["metrics"].traceability_rate == 1.0
+
+
+def test_finalize_compose_excludes_framework_sections_without_source_req_ids_from_traceability_rate():
+    """Secciones de plantilla comercial (equipo, precio/SLA, riesgos, etc.)
+    no traen source_req_ids porque no derivan de un requisito puntual del
+    RFP - no deben contar como "uncited" y arrastrar la tasa de
+    trazabilidad hacia abajo solo por no citar nada (no tienen afirmaciones
+    factuales que citar)."""
+    cited_section = ProposalSection(
+        heading="Solución", body="Texto respaldado [[chunk_001]].", cited_chunks=["chunk_001"], source_req_ids=["req_001"]
+    )
+    framework_section = ProposalSection(
+        heading="Equipo propuesto", body="[Arquitecto de datos - nombre]: liderazgo técnico.", cited_chunks=[], source_req_ids=[]
+    )
+    node = make_finalize_compose_node(_CHUNK_BY_ID)
+
+    state = {
+        "sections": [cited_section, framework_section],
+        "valid_chunk_ids": {"chunk_001"},
+        "retry_count": 0,
+        "section_verification": [
+            ProposalSectionVerification(heading="Solución", supported=True, issues=[], confidence=0.9),
+            ProposalSectionVerification(heading="Equipo propuesto", supported=True, issues=[], confidence=1.0),
+        ],
+        "hallucination_catches": 0,
+        "trace_log": [],
+    }
+
+    result = node(state)
+
+    assert result["metrics"].fully_cited_count == 1
+    assert result["metrics"].uncited_count == 0
+    assert result["metrics"].traceability_rate == 1.0

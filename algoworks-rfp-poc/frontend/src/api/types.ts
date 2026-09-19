@@ -1,9 +1,5 @@
 /**
- * TypeScript mirror of backend/api/schemas.py, scoped to the base RFP
- * pipeline (POST /rfp/process, GET /rfp/{id}/trace, POST /rfp/{req_id}/feedback,
- * GET /health). The backend also exposes PDF ingestion and a separate
- * "compose proposal" pipeline (ProposalDocument, ComposeMetrics, etc.) -
- * intentionally out of scope for this app; see docs/CONTRATO_DATOS.md.
+ * TypeScript mirror of backend/api/schemas.py — see docs/CONTRATO_DATOS.md.
  */
 
 // section_target is `str` in the Pydantic model, constrained in practice to
@@ -23,6 +19,8 @@ export interface RetrievedChunk {
   score: number
   justification: string
   source: string
+  /** Exact text of the retrieved chunk. */
+  text: string
 }
 
 export interface CitationSimilarity {
@@ -98,4 +96,71 @@ export interface PipelineResult {
 export interface ApiErrorBody {
   error: string
   detail: string
+}
+
+// --- compose_proposal pipeline (POST /rfp/{id}/compose) ---
+
+export interface ChunkCitation {
+  chunk_id: string
+  /** Exact text of the cited chunk, resolved from the corpus. */
+  text: string
+  source: string
+  section_type: string
+}
+
+export interface ProposalSection {
+  heading: string
+  /** Contains inline `[[chunk_id]]` markers. */
+  body: string
+  cited_chunks: string[]
+  source_req_ids: string[]
+  citations: ChunkCitation[]
+}
+
+export interface ProposalSectionVerification {
+  heading: string
+  supported: boolean
+  issues: string[]
+  confidence: number
+  reasoning: string
+  retries_used: number
+}
+
+export interface ComposeMetrics {
+  total_duration_ms: number
+  total_tokens: TokenUsage
+  retries_used: number
+  sections_supported: number
+  sections_needing_review: number
+  hallucinated_citations_caught: number
+  hallucinated_citations_removed: number
+  fully_cited_count: number
+  partially_cited_count: number
+  uncited_count: number
+  traceability_rate: number
+  partial_rate: number
+  uncited_rate: number
+}
+
+export interface ProposalDocument {
+  rfp_id: string
+  sections: ProposalSection[]
+  verification: ProposalSectionVerification[]
+  trace_log: TraceEvent[]
+  metrics: ComposeMetrics
+}
+
+// --- traceability report (GET /rfp/{id}/traceability-report) ---
+
+export interface TraceabilityReport {
+  rfp_id: string
+  total_responses: number
+  fully_cited: number
+  partially_cited: number
+  uncited: number
+  traceability_rate: number
+  partial_rate: number
+  uncited_rate: number
+  verified_count: number
+  verification_rate: number
 }

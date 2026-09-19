@@ -31,7 +31,11 @@ def make_retrieve_chunks_node(llm, vectorstore, top_k: int = DEFAULT_TOP_K):
                 justification = invoke_tracked(llm, justification_prompt, accumulator)
                 retrieved_for_requirement.append(
                     RetrievedChunk(
-                        chunk_id=chunk_id, score=score, justification=justification, source=source
+                        chunk_id=chunk_id,
+                        score=score,
+                        justification=justification,
+                        source=source,
+                        text=chunk_text,
                     )
                 )
             retrieved[requirement.req_id] = retrieved_for_requirement

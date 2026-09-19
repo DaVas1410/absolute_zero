@@ -6,8 +6,8 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { id: 'new-request', label: 'New Request', icon: FilePlus2, active: true },
-  { id: 'my-projects', label: 'My Projects', icon: FolderKanban, active: false },
+  { id: 'new-request', label: 'Nueva solicitud', icon: FilePlus2, active: true },
+  { id: 'my-projects', label: 'Mis proyectos', icon: FolderKanban, active: false },
 ]
 
 /** Fixed 240px dark rail - identical across every screen. */

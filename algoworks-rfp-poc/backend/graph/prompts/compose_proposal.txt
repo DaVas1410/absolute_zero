@@ -5,13 +5,35 @@ Requisitos y sus borradores verificados:
 
 {retry_feedback}
 
-Organiza el contenido en secciones con sentido de negocio (por ejemplo: entendimiento del problema, solución propuesta, seguridad y gobierno, enfoque de implementación, experiencia relevante, equipo propuesto, certificaciones, riesgos y próximos pasos) — decidí vos cuántas secciones tiene sentido usar y cómo agruparlas según el contenido disponible. Nunca uses los identificadores de requisito (R1, REQ1, etc.) como encabezado de sección.
+Estructura obligatoria del documento, en este orden (nunca uses los identificadores de requisito como encabezado de sección):
 
-Reglas estrictas:
+1. Carta de presentación — breve, sin citas.
+2. Entendimiento del problema — resume lo que pide el RFP, sin citas.
+3. Solución propuesta — la sección principal, basada en los borradores verificados y sus citas.
+4. Enfoque de implementación — ver instrucción especial abajo.
+5. Equipo propuesto — ver instrucción especial abajo.
+6. Seguridad y gobierno de datos — sin citas, salvo que un borrador ya cite algo directamente relevante.
+7. Términos comerciales y SLA propuesto — ver instrucción especial abajo.
+8. Diferenciación — por qué Algoworks frente a otro proveedor; debe anclarse EXCLUSIVAMENTE a hechos ya citados en "Solución propuesta" (nunca afirmaciones genéricas nuevas tipo "experiencia probada" sin un dato concreto detrás).
+9. Referencias y validación — sin citas.
+10. Riesgos — ver instrucción especial abajo.
+11. Supuestos — sin citas.
+12. Próximos pasos — sin citas.
+
+Si para un tema puntual dentro de una de estas secciones no hay evidencia verificada disponible en los borradores, decilo explícitamente como "pendiente de validación" — pero la sección completa NUNCA debe reducirse a esa única frase (ver instrucción especial de "Enfoque de implementación", "Equipo propuesto" y "Términos comerciales y SLA propuesto": ahí la resolución correcta es una plantilla con placeholders, no una frase de una línea).
+
+Instrucción especial para "Enfoque de implementación", "Equipo propuesto" y "Términos comerciales y SLA propuesto": el corpus disponible no trae esta información todavía. NO la inventes. En su lugar, generá una plantilla concreta y accionable con placeholders entre corchetes que el equipo comercial completará antes de enviar la propuesta. Ejemplos de formato esperado (adaptá el contenido, no copies estos ejemplos literalmente):
+- "Fase 1 — Diagnóstico: [duración]. Fase 2 — Piloto: [duración]. Fase 3 — Despliegue: [duración]. Metodología: [ágil por sprints / hitos waterfall]. Validación del requisito de latencia: [cómo se probará en el entorno del cliente]."
+- "[Arquitecto de datos — nombre]: liderazgo técnico de la solución. [Ingeniero de datos senior — nombre]: implementación y pruebas. [Gerente de proyecto — nombre]: seguimiento y comunicación con el cliente."
+- "Modelo de precio: [fijo / por fase / por consumo]. Disponibilidad objetivo del SLA: [XX.X]% mensual. Tiempo de respuesta ante incidentes: [Severidad 1: X horas; Severidad 2: X horas]. Penalidades por incumplimiento: [a definir]."
+Nunca dejes estas tres secciones como una sola frase — siempre una plantilla con varios placeholders concretos, aunque estén vacíos.
+
+Instrucción especial para "Riesgos": cada riesgo es su propio ítem con probabilidad, impacto y mitigación — nunca una frase suelta ni mezclado con supuestos o próximos pasos (esos van en sus propias secciones). Formato por ítem: "Riesgo: [descripción]. Probabilidad: [alta/media/baja]. Impacto: [alta/media/baja]. Mitigación: [acción concreta]."
+
+Reglas estrictas (aplican a toda sección que haga afirmaciones factuales sobre Algoworks — "Solución propuesta" y cualquier otra que cite un hecho):
 - Usa SOLO los marcadores [[chunk_id]] que ya aparecen en los borradores de entrada. Nunca inventes un chunk_id nuevo ni cites uno que no esté en los borradores.
-- No incluyas afirmaciones que no estén presentes en los borradores de entrada. Si un requisito tiene "problemas conocidos" listados, no repitas ni reformules esa frase problemática — omitila directamente.
-- Si un tema no tiene evidencia verificada disponible, decilo explícitamente como "pendiente de validación" en vez de inventar contenido.
+- No incluyas afirmaciones factuales que no estén presentes en los borradores de entrada. Si un requisito tiene "problemas conocidos" listados, no repitas ni reformules esa frase problemática — omitila directamente.
 - Podés reformular y reorganizar el texto para que fluya como un documento único y profesional, pero cada afirmación factual debe seguir citando el mismo [[chunk_id]] que tenía en el borrador original de origen.
-- Agregá una carta de presentación breve al inicio y un cierre de riesgos/supuestos/próximos pasos al final — estas dos secciones no llevan citas porque no hacen afirmaciones factuales sobre Algoworks, solo enmarcan el documento.
+- Nunca describas a Algoworks con adjetivos genéricos sueltos ("experiencia técnica profunda", "trayectoria sólida") sin anclarlos a un hecho citado — si afirmás algo, citá el dato concreto que lo respalda.
 
-Para cada sección, indica también qué req_id(s) del RFP alimentaron su contenido (source_req_ids; lista vacía para la carta de presentación y el cierre).
+Para cada sección, indica también qué req_id(s) del RFP alimentaron su contenido (source_req_ids; lista vacía para las secciones que no se basan en un requisito específico).

@@ -5,11 +5,11 @@ import { ProgressStep, type StepState } from '../ui/ProgressStep'
 import './ProcessingScreen.css'
 
 const STEPS: { title: string; subtitle: string }[] = [
-  { title: 'Extract requirements', subtitle: 'Parsing the RFP into structured requirements.' },
-  { title: 'Retrieve chunks', subtitle: 'Searching the knowledge base for supporting sources.' },
-  { title: 'Generate draft', subtitle: 'Drafting each section with inline citations.' },
-  { title: 'Verify citations', subtitle: 'Checking every citation actually supports its claim.' },
-  { title: 'Compute traceability metrics', subtitle: 'Auditing the run and scoring citation grounding.' },
+  { title: 'Extraer requisitos', subtitle: 'Convirtiendo el RFP en requisitos estructurados.' },
+  { title: 'Recuperar fragmentos', subtitle: 'Buscando fuentes de respaldo en la base de conocimiento.' },
+  { title: 'Generar borrador', subtitle: 'Redactando cada sección con citas en línea.' },
+  { title: 'Verificar citas', subtitle: 'Comprobando que cada cita respalda su afirmación.' },
+  { title: 'Calcular métricas de trazabilidad', subtitle: 'Auditando la corrida y midiendo el respaldo de cada cita.' },
 ]
 
 const STEP_INTERVAL_MS = 3000
@@ -61,7 +61,7 @@ export function ProcessingScreen({ isSettled, hasError }: ProcessingScreenProps)
 
   return (
     <div className="td-processing">
-      <h1 className="text-h1">Analyzing your request…</h1>
+      <h1 className="text-h1">Analizando tu solicitud…</h1>
       <p className="text-body-sm td-processing__sub">
         Puede tardar hasta un minuto - el pipeline extrae requisitos, busca fuentes y verifica cada
         afirmación antes de responder.

@@ -26,6 +26,8 @@ def test_retrieve_chunks_attaches_justification_per_candidate():
     assert retrieved[0].justification == "Justificación A."
     assert retrieved[1].justification == "Justificación B."
     assert retrieved[0].source == "Propuesta_ClienteRetail_2022.md"
+    assert retrieved[0].text == "Proyecto de retail."
+    assert retrieved[1].text == "Proyecto de manufactura."
     assert len(result["trace_log"]) == 1
     assert result["trace_log"][0].node == "retrieve_chunks"
     assert result["trace_log"][0].duration_ms >= 0.0

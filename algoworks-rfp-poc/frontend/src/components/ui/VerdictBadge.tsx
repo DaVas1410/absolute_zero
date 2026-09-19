@@ -16,13 +16,13 @@ export function VerdictBadge({ supported, confidence }: VerdictBadgeProps) {
   if (supported) {
     return (
       <Badge tone="success" icon={<Check />}>
-        Supported · {formatPercent(confidence)}
+        Respaldado · {formatPercent(confidence)}
       </Badge>
     )
   }
   return (
     <Badge tone="caution" icon={<AlertTriangle />}>
-      Needs review · {formatPercent(confidence)}
+      Necesita revisión · {formatPercent(confidence)}
     </Badge>
   )
 }

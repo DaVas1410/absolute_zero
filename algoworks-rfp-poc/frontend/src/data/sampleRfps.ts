@@ -1,5 +1,6 @@
 import experienciaArquitectura from '../../../data/sample_rfps/rfp_experiencia_arquitectura.txt?raw'
 import slaNoRespaldado from '../../../data/sample_rfps/rfp_sla_no_respaldado.txt?raw'
+import saasIaMlops from '../../../data/sample_rfps/rfp_saas_ia_mlops.txt?raw'
 
 export interface SampleRfp {
   id: string
@@ -7,8 +8,8 @@ export interface SampleRfp {
   text: string
 }
 
-// Exactly the 2 real sample files that exist under data/sample_rfps/ - no
-// invented third example.
+// Exactly the real sample files that exist under data/sample_rfps/ - no
+// invented example with no backing file.
 export const SAMPLE_RFPS: SampleRfp[] = [
   {
     id: 'experiencia_arquitectura',
@@ -19,5 +20,10 @@ export const SAMPLE_RFPS: SampleRfp[] = [
     id: 'sla_no_respaldado',
     label: 'SLA no respaldado (caso adversarial)',
     text: slaNoRespaldado.trim(),
+  },
+  {
+    id: 'saas_ia_mlops',
+    label: 'MLOps + RAG + SaaS multi-tenant',
+    text: saasIaMlops.trim(),
   },
 ]

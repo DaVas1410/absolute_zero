@@ -107,11 +107,12 @@ def test_get_chat_llm_builds_groq_primary_and_ollama_fallback(monkeypatch):
     captured = {}
 
     class _FakeChatGroq:
-        def __init__(self, model, api_key=None):
+        def __init__(self, model, api_key=None, max_tokens=None):
             captured["groq_model"] = model
+            captured["groq_max_tokens"] = max_tokens
 
     class _FakeChatOllama:
-        def __init__(self, model, base_url=None):
+        def __init__(self, model, base_url=None, num_predict=None):
             captured["ollama_model"] = model
 
     monkeypatch.setattr("graph.llm.ChatGroq", _FakeChatGroq)
@@ -123,3 +124,24 @@ def test_get_chat_llm_builds_groq_primary_and_ollama_fallback(monkeypatch):
     assert isinstance(llm, FallbackChatModel)
     assert captured["groq_model"] == "test-small-model"
     assert "ollama_model" in captured
+    # "small" has no configured max_tokens override - left at the provider default.
+    assert captured["groq_max_tokens"] is None
+
+
+def test_get_chat_llm_large_sets_a_higher_max_tokens_for_the_multi_section_compose_call(monkeypatch):
+    captured = {}
+
+    class _FakeChatGroq:
+        def __init__(self, model, api_key=None, max_tokens=None):
+            captured["groq_max_tokens"] = max_tokens
+
+    class _FakeChatOllama:
+        def __init__(self, model, base_url=None, num_predict=None):
+            pass
+
+    monkeypatch.setattr("graph.llm.ChatGroq", _FakeChatGroq)
+    monkeypatch.setattr("graph.llm.ChatOllama", _FakeChatOllama)
+
+    get_chat_llm("large")
+
+    assert captured["groq_max_tokens"] == 8000

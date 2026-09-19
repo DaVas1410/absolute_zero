@@ -14,7 +14,7 @@ interface FeedbackBadgeProps {
 export function FeedbackBadge({ accepted }: FeedbackBadgeProps) {
   return (
     <Badge tone="neutral" icon={accepted ? <ThumbsUp /> : <ThumbsDown />}>
-      {accepted ? 'Accepted' : 'Rejected'}
+      {accepted ? 'Aceptado' : 'Rechazado'}
     </Badge>
   )
 }

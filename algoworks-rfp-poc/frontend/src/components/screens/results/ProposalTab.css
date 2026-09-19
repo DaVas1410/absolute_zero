@@ -1,0 +1,50 @@
+.td-proposal-tab__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 560px;
+}
+
+.td-proposal-tab__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.td-proposal-tab__internal-note {
+  display: block;
+  color: var(--ink-subtle);
+  margin: calc(var(--space-2) * -1) 0 var(--space-4);
+}
+
+.td-proposal-tab__sections {
+  display: flex;
+  flex-direction: column;
+}
+
+.td-proposal-tab__citations {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.td-proposal-tab__citations-title {
+  margin: 0 0 var(--space-1);
+}
+
+.td-proposal-tab__spinner {
+  animation: td-spin 1s linear infinite;
+}
+
+@keyframes td-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

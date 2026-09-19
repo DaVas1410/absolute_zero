@@ -43,10 +43,10 @@ equipo, etc.) indexado en el vectorstore.
 }
 ```
 
-**Nota:** `Chunk.text` nunca se devuelve al frontend — `RetrievedChunk` (lo
-que sí ve el frontend) no incluye el texto completo del chunk, solo su
-`justification`. Cualquier UI que necesite mostrar "el extracto citado
-literal" debe renderizar un valor vacío/"—" en vez de inventar contenido.
+**Nota (actualizada):** `RetrievedChunk.text` ahora expone el texto exacto
+del `Chunk` recuperado (mismo criterio que `ChunkCitation.text` en el pipeline
+de `compose_proposal`), para que el frontend pueda mostrar "el extracto
+citado literal" sin inventar contenido.
 
 ---
 
@@ -81,13 +81,15 @@ similitud y una justificación en lenguaje natural de por qué fue recuperado.
 | `score`          | `float` | Score de similitud coseno, acotado a `[0, 1]`.         |
 | `justification`  | `str`   | Explicación en lenguaje natural de la relevancia.      |
 | `source`         | `str`   | Documento de origen del `Chunk` (aditivo). Default `""`. |
+| `text`           | `str`   | Texto exacto del `Chunk` recuperado (aditivo). Default `""`. |
 
 ```json
 {
   "chunk_id": "chunk_001",
   "score": 0.87,
   "justification": "El chunk describe experiencia previa relevante en integración de datos.",
-  "source": "Propuesta_ClienteX_2023.md"
+  "source": "Propuesta_ClienteX_2023.md",
+  "text": "Algoworks entregó 12 proyectos de integración de datos en 2023."
 }
 ```
 

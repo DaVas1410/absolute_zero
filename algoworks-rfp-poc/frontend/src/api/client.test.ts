@@ -1,5 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, checkHealth, getTrace, processRfp, submitFeedback } from './client'
+import {
+  ApiError,
+  checkHealth,
+  composeProposal,
+  getTrace,
+  getTraceabilityReport,
+  processRfp,
+  processRfpPdf,
+  submitFeedback,
+} from './client'
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -83,6 +92,52 @@ describe('submitFeedback', () => {
     )
 
     await expect(submitFeedback('req_001', true)).rejects.toMatchObject({ status: 500 })
+  })
+})
+
+describe('processRfpPdf', () => {
+  it('posts a multipart body without an explicit Content-Type header', async () => {
+    const payload = { rfp_id: 'rfp_1', requirements: [] }
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, payload))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const file = new File(['contenido'], 'rfp.pdf', { type: 'application/pdf' })
+    const result = await processRfpPdf('rfp_1', file)
+
+    expect(result).toEqual(payload)
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('http://localhost:8000/rfp/process/pdf')
+    expect(init.method).toBe('POST')
+    expect(init.body).toBeInstanceOf(FormData)
+    expect(init.headers).toBeUndefined()
+    expect((init.body as FormData).get('rfp_id')).toBe('rfp_1')
+  })
+})
+
+describe('composeProposal', () => {
+  it('posts to /rfp/{id}/compose and returns the ProposalDocument', async () => {
+    const payload = { rfp_id: 'rfp_1', sections: [] }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, payload)))
+
+    await expect(composeProposal('rfp_1')).resolves.toEqual(payload)
+  })
+
+  it('throws ApiError on a 404 (no prior pipeline run)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(404, { error: 'Not Found', detail: 'no hay resultados' })),
+    )
+
+    await expect(composeProposal('rfp_1')).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe('getTraceabilityReport', () => {
+  it('returns the parsed report on 200', async () => {
+    const report = { rfp_id: 'rfp_1', traceability_rate: 0.5 }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, report)))
+
+    await expect(getTraceabilityReport('rfp_1')).resolves.toEqual(report)
   })
 })
 

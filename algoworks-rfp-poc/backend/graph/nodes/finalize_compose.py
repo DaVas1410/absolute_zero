@@ -53,9 +53,16 @@ def make_finalize_compose_node(chunk_by_id: dict[str, Chunk]):
                 update={"citations": _resolve_citations(section.cited_chunks, chunk_by_id)}
             )
 
+        # Only sections that trace back to an actual RFP requirement
+        # (source_req_ids non-empty) are expected to carry citations - the
+        # standard business-proposal sections the prompt always adds (equipo,
+        # precio/SLA, riesgos, diferenciación, etc.) are framework/template
+        # content by design and would otherwise mechanically drag this rate
+        # down as "uncited" for making no factual claim at all.
         coverages = [
             classify_citation_coverage(section.cited_chunks, verification.supported, verification.issues)
             for section, verification in zip(sections, state["section_verification"])
+            if section.source_req_ids
         ]
 
         total_tokens = TokenUsage(

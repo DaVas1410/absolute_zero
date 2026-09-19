@@ -173,10 +173,9 @@ Dispara el pipeline real de LangGraph y devuelve un `PipelineResult` completo.
   solo el veredicto base.
 - `metrics` y `reasoning_path_audit` son top-level en `PipelineResult`, no
   van por `req_id` — son de toda la corrida.
-- `RetrievedChunk` **no** incluye el texto completo del chunk (`Chunk.text`
-  nunca se serializa de vuelta), solo `chunk_id`/`score`/`justification`/`source`.
-  Un panel de "ver fuente completa" debe mostrar un placeholder, no inventar
-  el texto.
+- `RetrievedChunk` ahora incluye `text` (texto exacto del chunk recuperado),
+  además de `chunk_id`/`score`/`justification`/`source`. Un panel de "ver
+  fuente completa" puede mostrar `text` directamente.
 - El backend guarda el último resultado en memoria por `rfp_id` (no persiste
   en disco); si reinician el servidor, hay que volver a llamar
   `/rfp/process` antes de pedir el `/trace`.

@@ -3,10 +3,10 @@
 React + Vite + TypeScript client for the Algoworks RFP PoC backend. Design
 system: `trace-desk-design-reference.md` (see repo root / project docs).
 
-Scoped to the base 4-endpoint pipeline (`GET /health`, `POST /rfp/process`,
-`GET /rfp/{id}/trace`, `POST /rfp/{req_id}/feedback`) — PDF ingestion and the
-consolidated-proposal ("compose") endpoints are a separate backend
-sub-project, not yet covered here.
+Covers `GET /health`, `POST /rfp/process`, `POST /rfp/process/pdf`,
+`GET /rfp/{id}/trace`, `POST /rfp/{req_id}/feedback`, `POST /rfp/{id}/compose`
+and `GET /rfp/{id}/traceability-report`. `POST /corpus/ingest` (uploading a
+past-proposal PDF into the knowledge base) is not wired to any UI yet.
 
 ## Setup
 
@@ -42,9 +42,8 @@ even fall back to a local Ollama.
 - `src/data/sampleRfps.ts` — loads `../data/sample_rfps/*.txt` for the demo
   picker
 
-## Known gaps (by API design, not a bug)
+## Known gaps
 
-`RetrievedChunk` never includes the underlying chunk's full text or
-`section_type` — only `chunk_id`, `score`, `justification`, `source`. The
-`DetailPanel`'s "quoted excerpt" renders a placeholder rather than inventing
-content; see `docs/CONTRATO_DATOS.md`.
+- `RetrievedChunk` still never includes `section_type`.
+- `POST /corpus/ingest` (uploading a past-proposal PDF into the knowledge
+  base) has no UI — the "My Projects" sidebar entry is a placeholder for it.
