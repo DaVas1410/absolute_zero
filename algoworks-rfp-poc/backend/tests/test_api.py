@@ -24,7 +24,7 @@ from api.schemas import (
     TraceEvent,
     VerificationResult,
 )
-from rag.store import build_vectorstore
+from rag.store import build_vectorstore, similarity_search
 from tests.fakes import FakeEmbeddings, make_pdf_bytes
 
 client = TestClient(app)
@@ -102,8 +102,17 @@ def override_corpus_resources(tmp_path, monkeypatch):
     import rag.corpus as corpus_module
 
     monkeypatch.setattr(corpus_module, "DEFAULT_INGESTED_PATH", tmp_path / "ingested_chunks.json")
-    app.dependency_overrides[get_corpus_resources] = _fake_corpus_resources
-    yield
+    # Construido UNA sola vez y reusado en cada Depends(get_corpus_resources):
+    # en produccion _get_corpus_resources() esta cacheado con @lru_cache, asi
+    # que todas las requests comparten el mismo vectorstore. Si aca se
+    # construyera un vectorstore nuevo por request (como hacia
+    # _fake_corpus_resources llamado directamente), un test no podria
+    # verificar que un chunk ingestado por POST /corpus/ingest queda
+    # realmente retrievable despues, porque cada request golpearia un
+    # vectorstore distinto sin memoria de la ingesta anterior.
+    resources = _fake_corpus_resources()
+    app.dependency_overrides[get_corpus_resources] = lambda: resources
+    yield resources
     app.dependency_overrides.clear()
 
 
@@ -159,7 +168,7 @@ def test_feedback_endpoint():
     assert response.json() == {"status": "received"}
 
 
-def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable():
+def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable(override_corpus_resources):
     pdf_bytes = make_pdf_bytes("Algoworks tiene experiencia en proyectos de manufactura.")
 
     response = client.post(
@@ -174,6 +183,15 @@ def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable():
     assert result.section_type == "experiencia_previa"
     assert result.chunk_count >= 1
     assert result.chunks_added[0].chunk_id == "propuesta_manufactura_001"
+
+    # Prueba mutacion viva del vectorstore, no solo wiring del endpoint: el
+    # chunk recien ingestado debe ser recuperable via similarity_search en la
+    # MISMA instancia de vectorstore que uso el endpoint (override_corpus_resources
+    # devuelve siempre la misma tupla capturada, igual que el lru_cache real).
+    vectorstore, _embeddings, _chunk_texts_by_id = override_corpus_resources
+    results = similarity_search(vectorstore, "manufactura", k=2)
+    retrieved_chunk_ids = [chunk_id for chunk_id, _text, _score in results]
+    assert "propuesta_manufactura_001" in retrieved_chunk_ids
 
 
 def test_ingest_corpus_pdf_rejects_invalid_section_type():
