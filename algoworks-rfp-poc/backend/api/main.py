@@ -20,7 +20,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 load_dotenv()
 
-from api.schemas import CorpusIngestResult, PipelineResult, ProposalDocument, SectionType, TraceEvent
+from api.schemas import Chunk, CorpusIngestResult, PipelineResult, ProposalDocument, SectionType, TraceabilityReport, TraceEvent
 from graph.compose_graph import run_compose
 from graph.graph import run_pipeline
 from graph.llm import get_chat_llm
@@ -86,6 +86,11 @@ class FeedbackRequest(BaseModel):
 # para que GET /rfp/{rfp_id}/trace pueda devolver su trace_log.
 _pipeline_results: dict[str, PipelineResult] = {}
 
+# Feedback humano recibido via POST /rfp/{req_id}/feedback, por req_id.
+# Antes este endpoint solo logueaba y no persistia nada; ahora alimenta
+# verification_rate en GET /rfp/{rfp_id}/traceability-report.
+_feedback: dict[str, bool] = {}
+
 
 PipelineRunner = Callable[[str, str], PipelineResult]
 
@@ -96,10 +101,11 @@ def _get_corpus_resources():
     embeddings = SentenceTransformerEmbeddings()
     vectorstore = build_vectorstore(chunks, embeddings)
     chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
-    return vectorstore, embeddings, chunk_texts_by_id
+    chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
+    return vectorstore, embeddings, chunk_texts_by_id, chunk_by_id
 
 
-CorpusResources = tuple[Chroma, Embeddings, dict[str, str]]
+CorpusResources = tuple[Chroma, Embeddings, dict[str, str], dict[str, Chunk]]
 
 
 def get_corpus_resources() -> CorpusResources:
@@ -117,7 +123,7 @@ def _warm_up_corpus_resources() -> None:
 def _default_pipeline_runner(rfp_id: str, rfp_text: str) -> PipelineResult:
     llm_small = get_chat_llm("small")
     llm_large = get_chat_llm("large")
-    vectorstore, embeddings, chunk_texts_by_id = _get_corpus_resources()
+    vectorstore, embeddings, chunk_texts_by_id, _chunk_by_id = _get_corpus_resources()
     return run_pipeline(rfp_id, rfp_text, llm_small, llm_large, vectorstore, embeddings, chunk_texts_by_id)
 
 
@@ -139,9 +145,9 @@ def _default_compose_runner(rfp_id: str) -> ProposalDocument:
             ),
         )
     llm_large = get_chat_llm("large")
-    _vectorstore, _embeddings, chunk_texts_by_id = _get_corpus_resources()
+    _vectorstore, _embeddings, _chunk_texts_by_id, chunk_by_id = _get_corpus_resources()
     return run_compose(
-        rfp_id, result.requirements, result.drafts, result.verification, llm_large, chunk_texts_by_id
+        rfp_id, result.requirements, result.drafts, result.verification, llm_large, chunk_by_id
     )
 
 
@@ -177,7 +183,7 @@ def ingest_corpus_pdf(
     # congela todo el proceso (incluso /health) mientras dura. Starlette
     # corre las funciones def sincronas en un threadpool automaticamente,
     # igual que el process_rfp preexistente.
-    vectorstore, _embeddings, chunk_texts_by_id = corpus_resources
+    vectorstore, _embeddings, chunk_texts_by_id, chunk_by_id = corpus_resources
     file_bytes = file.file.read()
     resolved_source = source or file.filename or "documento.pdf"
 
@@ -189,6 +195,7 @@ def ingest_corpus_pdf(
     chunks = chunk_pdf_text(text, source=resolved_source, section_type=section_type)
     add_chunks(vectorstore, chunks)
     chunk_texts_by_id.update({chunk.chunk_id: chunk.text for chunk in chunks})
+    chunk_by_id.update({chunk.chunk_id: chunk for chunk in chunks})
     corpus.append_ingested_chunks(chunks, path=corpus.DEFAULT_INGESTED_PATH)
 
     return CorpusIngestResult(
@@ -239,7 +246,36 @@ def compose_proposal_endpoint(
     return compose_runner(rfp_id)
 
 
+@app.get("/rfp/{rfp_id}/traceability-report", response_model=TraceabilityReport)
+def get_traceability_report(rfp_id: str) -> TraceabilityReport:
+    result = _pipeline_results.get(rfp_id)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"No hay resultados disponibles para rfp_id={rfp_id!r}. "
+                "Ejecuta POST /rfp/process (o /rfp/process/pdf) primero."
+            ),
+        )
+    metrics = result.metrics
+    total_responses = len(result.requirements)
+    verified_count = sum(1 for req in result.requirements if req.req_id in _feedback)
+    return TraceabilityReport(
+        rfp_id=rfp_id,
+        total_responses=total_responses,
+        fully_cited=metrics.fully_cited_count,
+        partially_cited=metrics.partially_cited_count,
+        uncited=metrics.uncited_count,
+        traceability_rate=metrics.traceability_rate,
+        partial_rate=metrics.partial_rate,
+        uncited_rate=metrics.uncited_rate,
+        verified_count=verified_count,
+        verification_rate=verified_count / total_responses if total_responses else 0.0,
+    )
+
+
 @app.post("/rfp/{req_id}/feedback")
 def submit_feedback(req_id: str, payload: FeedbackRequest) -> dict[str, str]:
     logger.info("Feedback recibido para req_id=%s: accepted=%s", req_id, payload.accepted)
+    _feedback[req_id] = payload.accepted
     return {"status": "received"}

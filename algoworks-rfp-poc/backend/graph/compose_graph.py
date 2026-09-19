@@ -6,18 +6,20 @@ calculado — nunca vuelve a extraer requisitos ni a recuperar del corpus."""
 
 from langgraph.graph import END, StateGraph
 
-from api.schemas import DraftSection, ProposalDocument, Requirement, VerificationResult
+from api.schemas import Chunk, DraftSection, ProposalDocument, Requirement, VerificationResult
 from graph.nodes.compose_proposal import make_compose_proposal_node
 from graph.nodes.finalize_compose import make_finalize_compose_node
 from graph.nodes.verify_proposal import make_verify_proposal_node, should_retry_compose
 from graph.state import ComposeState
 
 
-def build_compose_graph(llm, chunk_texts_by_id: dict[str, str]):
+def build_compose_graph(llm, chunk_by_id: dict[str, Chunk]):
+    chunk_texts_by_id = {chunk_id: chunk.text for chunk_id, chunk in chunk_by_id.items()}
+
     graph = StateGraph(ComposeState)
     graph.add_node("compose_proposal", make_compose_proposal_node(llm))
     graph.add_node("verify_proposal", make_verify_proposal_node(llm, chunk_texts_by_id))
-    graph.add_node("finalize_compose", make_finalize_compose_node())
+    graph.add_node("finalize_compose", make_finalize_compose_node(chunk_by_id))
 
     graph.set_entry_point("compose_proposal")
     graph.add_edge("compose_proposal", "verify_proposal")
@@ -36,13 +38,13 @@ def run_compose(
     drafts: dict[str, DraftSection],
     verification: dict[str, VerificationResult],
     llm,
-    chunk_texts_by_id: dict[str, str],
+    chunk_by_id: dict[str, Chunk],
 ) -> ProposalDocument:
     valid_chunk_ids: set[str] = set()
     for draft in drafts.values():
         valid_chunk_ids.update(draft.cited_chunks)
 
-    compiled_graph = build_compose_graph(llm, chunk_texts_by_id)
+    compiled_graph = build_compose_graph(llm, chunk_by_id)
     initial_state: ComposeState = {
         "rfp_id": rfp_id,
         "requirements": requirements,

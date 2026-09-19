@@ -8,13 +8,29 @@ import re
 import time
 from datetime import datetime, timezone
 
-from api.schemas import ComposeMetrics, TokenUsage, TraceEvent
+from api.schemas import Chunk, ChunkCitation, ComposeMetrics, TokenUsage, TraceEvent
+from graph.citation_coverage import classify_citation_coverage, summarize_citation_coverage
 from graph.state import ComposeState
 
 _CITATION_PATTERN = re.compile(r"\[\[([^\[\]]+)\]\]")
 
 
-def make_finalize_compose_node():
+def _resolve_citations(cited_chunks: list[str], chunk_by_id: dict[str, Chunk]) -> list[ChunkCitation]:
+    """Resuelve cada chunk_id citado (ya limpio de alucinaciones) al texto
+    exacto y la fuente del corpus, para que el documento final traiga el
+    chunk completo listo para mostrar junto a la cita, sin otro round-trip."""
+    citations = []
+    for chunk_id in cited_chunks:
+        chunk = chunk_by_id.get(chunk_id)
+        if chunk is None:
+            continue
+        citations.append(
+            ChunkCitation(chunk_id=chunk.chunk_id, text=chunk.text, source=chunk.source, section_type=chunk.section_type)
+        )
+    return citations
+
+
+def make_finalize_compose_node(chunk_by_id: dict[str, Chunk]):
     def finalize_compose(state: ComposeState) -> dict:
         started_at = time.perf_counter()
 
@@ -25,14 +41,22 @@ def make_finalize_compose_node():
         for index, section in enumerate(sections):
             cited_ids = _CITATION_PATTERN.findall(section.body)
             still_hallucinated = [chunk_id for chunk_id in cited_ids if chunk_id not in valid_chunk_ids]
-            if not still_hallucinated:
-                continue
-            body = section.body
-            for chunk_id in still_hallucinated:
-                body = body.replace(f"[[{chunk_id}]]", "")
-                removed += 1
-            cited_chunks = [chunk_id for chunk_id in section.cited_chunks if chunk_id in valid_chunk_ids]
-            sections[index] = section.model_copy(update={"body": body, "cited_chunks": cited_chunks})
+            if still_hallucinated:
+                body = section.body
+                for chunk_id in still_hallucinated:
+                    body = body.replace(f"[[{chunk_id}]]", "")
+                    removed += 1
+                cited_chunks = [chunk_id for chunk_id in section.cited_chunks if chunk_id in valid_chunk_ids]
+                section = section.model_copy(update={"body": body, "cited_chunks": cited_chunks})
+
+            sections[index] = section.model_copy(
+                update={"citations": _resolve_citations(section.cited_chunks, chunk_by_id)}
+            )
+
+        coverages = [
+            classify_citation_coverage(section.cited_chunks, verification.supported, verification.issues)
+            for section, verification in zip(sections, state["section_verification"])
+        ]
 
         total_tokens = TokenUsage(
             input_tokens=sum(event.tokens.input_tokens for event in state["trace_log"] if event.tokens),
@@ -48,6 +72,7 @@ def make_finalize_compose_node():
             sections_needing_review=sum(1 for v in state["section_verification"] if not v.supported),
             hallucinated_citations_caught=state["hallucination_catches"],
             hallucinated_citations_removed=removed,
+            **summarize_citation_coverage(coverages),
         )
 
         trace_event = TraceEvent(

@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 
+import api.main as main_module
 from api.main import app, get_compose_runner, get_corpus_resources, get_pipeline_runner
 from api.schemas import (
     Chunk,
@@ -98,7 +99,8 @@ def _fake_corpus_resources():
     embeddings = FakeEmbeddings(_CORPUS_VOCABULARY)
     vectorstore = build_vectorstore(chunks, embeddings)
     chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
-    return vectorstore, embeddings, chunk_texts_by_id
+    chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
+    return vectorstore, embeddings, chunk_texts_by_id, chunk_by_id
 
 
 @pytest.fixture(autouse=True)
@@ -172,6 +174,62 @@ def test_feedback_endpoint():
     assert response.json() == {"status": "received"}
 
 
+def test_feedback_persists_server_side():
+    client.post("/rfp/req_feedback_persist/feedback", json={"accepted": False})
+
+    assert main_module._feedback["req_feedback_persist"] is False
+
+
+def test_traceability_report_after_process():
+    now = datetime.now(timezone.utc)
+    main_module._pipeline_results["rfp_report_001"] = PipelineResult(
+        rfp_id="rfp_report_001",
+        requirements=[
+            Requirement(req_id="req_report_a", text="...", section_target="experiencia_previa"),
+            Requirement(req_id="req_report_b", text="...", section_target="experiencia_previa"),
+        ],
+        retrieved={},
+        drafts={},
+        verification={},
+        trace_log=[],
+        metrics=PipelineMetrics(
+            total_duration_ms=0.0,
+            total_tokens=TokenUsage(),
+            retries_used=0,
+            requirements_supported=1,
+            requirements_needing_review=1,
+            hallucinated_citations_caught=0,
+            fully_cited_count=1,
+            partially_cited_count=1,
+            uncited_count=0,
+            traceability_rate=0.5,
+            partial_rate=0.5,
+            uncited_rate=0.0,
+        ),
+        reasoning_path_audit=ReasoningPathAudit(is_consistent=True, node_sequence=[], issues=[]),
+    )
+    main_module._feedback["req_report_a"] = True
+
+    response = client.get("/rfp/rfp_report_001/traceability-report")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total_responses"] == 2
+    assert body["fully_cited"] == 1
+    assert body["partially_cited"] == 1
+    assert body["traceability_rate"] == 0.5
+    assert body["verified_count"] == 1
+    assert body["verification_rate"] == 0.5
+
+
+def test_traceability_report_unknown_rfp_returns_error_format():
+    response = client.get("/rfp/unknown_rfp/traceability-report")
+
+    assert response.status_code == 404
+    body = response.json()
+    assert set(body.keys()) == {"error", "detail"}
+
+
 def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable(override_corpus_resources):
     pdf_bytes = make_pdf_bytes("Algoworks tiene experiencia en proyectos de manufactura.")
 
@@ -192,7 +250,7 @@ def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable(override_co
     # chunk recien ingestado debe ser recuperable via similarity_search en la
     # MISMA instancia de vectorstore que uso el endpoint (override_corpus_resources
     # devuelve siempre la misma tupla capturada, igual que el lru_cache real).
-    vectorstore, _embeddings, _chunk_texts_by_id = override_corpus_resources
+    vectorstore, _embeddings, _chunk_texts_by_id, _chunk_by_id = override_corpus_resources
     results = similarity_search(vectorstore, "manufactura", k=2)
     retrieved_chunk_ids = [chunk_id for chunk_id, _text, _score, _source in results]
     assert "propuesta_manufactura_001" in retrieved_chunk_ids

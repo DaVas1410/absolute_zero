@@ -146,10 +146,27 @@ def test_compute_traceability_metrics_node_aggregates_metrics_and_attaches_simil
     assert metrics.total_tokens.total_tokens == 15
     assert metrics.hallucinated_citations_caught == 0
     assert metrics.retries_used == 0
+    assert metrics.fully_cited_count == 1
+    assert metrics.uncited_count == 0
+    assert metrics.traceability_rate == 1.0
 
     assert result["reasoning_path_audit"].is_consistent is True
     assert result["trace_log"][-1].node == "compute_traceability_metrics"
     assert result["trace_log"][-1].tokens is None
+
+
+def test_compute_traceability_metrics_node_counts_uncited_requirement():
+    embeddings = FakeEmbeddings(VOCABULARY)
+    state = _valid_state()
+    state["drafts"]["req_001"] = state["drafts"]["req_001"].model_copy(update={"cited_chunks": []})
+    node = make_compute_traceability_metrics_node(embeddings, chunk_texts_by_id={})
+
+    result = node(state)
+
+    metrics = result["metrics"]
+    assert metrics.uncited_count == 1
+    assert metrics.fully_cited_count == 0
+    assert metrics.uncited_rate == 1.0
 
 
 def test_compute_traceability_metrics_node_skips_similarity_when_no_valid_citations():

@@ -85,6 +85,16 @@ class PipelineMetrics(BaseModel):
     requirements_supported: int
     requirements_needing_review: int
     hallucinated_citations_caught: int
+    # Cobertura de citas (código-only, ver graph/citation_coverage.py): un
+    # requisito "fully_cited" tiene citas y quedó soportado sin issues; uno
+    # "uncited" no citó ningún chunk; el resto ("partially_cited") citó algo
+    # pero el verificador encontró un problema.
+    fully_cited_count: int = 0
+    partially_cited_count: int = 0
+    uncited_count: int = 0
+    traceability_rate: float = 0.0
+    partial_rate: float = 0.0
+    uncited_rate: float = 0.0
 
 
 class ReasoningPathAudit(BaseModel):
@@ -111,11 +121,19 @@ class CorpusIngestResult(BaseModel):
     chunk_count: int
 
 
+class ChunkCitation(BaseModel):
+    chunk_id: str
+    text: str  # contenido exacto del chunk citado, resuelto desde el corpus
+    source: str
+    section_type: str
+
+
 class ProposalSection(BaseModel):
     heading: str
     body: str  # contiene marcadores [[chunk_id]] inline
     cited_chunks: list[str]
     source_req_ids: list[str]  # qué requisitos originales alimentaron esta sección
+    citations: list[ChunkCitation] = []  # cited_chunks resueltos a texto+fuente exactos (finalize_compose)
 
 
 class ProposalSectionVerification(BaseModel):
@@ -135,6 +153,14 @@ class ComposeMetrics(BaseModel):
     sections_needing_review: int
     hallucinated_citations_caught: int
     hallucinated_citations_removed: int  # tras agotar reintentos, eliminadas en código
+    # Mismo criterio de cobertura de citas que PipelineMetrics, aplicado a
+    # las secciones finales (post-strip de citas alucinadas).
+    fully_cited_count: int = 0
+    partially_cited_count: int = 0
+    uncited_count: int = 0
+    traceability_rate: float = 0.0
+    partial_rate: float = 0.0
+    uncited_rate: float = 0.0
 
 
 class ProposalDocument(BaseModel):
@@ -143,3 +169,21 @@ class ProposalDocument(BaseModel):
     verification: list[ProposalSectionVerification]
     trace_log: list[TraceEvent]
     metrics: ComposeMetrics
+
+
+class TraceabilityReport(BaseModel):
+    """Reporte agregado de trazabilidad para un rfp_id ya procesado: cobertura
+    de citas por requisito (código-only, calculado una vez en
+    compute_traceability_metrics) más verificación humana en vivo (via
+    POST /rfp/{req_id}/feedback, que ahora persiste en el backend)."""
+
+    rfp_id: str
+    total_responses: int
+    fully_cited: int
+    partially_cited: int
+    uncited: int
+    traceability_rate: float
+    partial_rate: float
+    uncited_rate: float
+    verified_count: int
+    verification_rate: float

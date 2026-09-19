@@ -15,6 +15,7 @@ from api.schemas import (
     TokenUsage,
     TraceEvent,
 )
+from graph.citation_coverage import classify_citation_coverage, summarize_citation_coverage
 from graph.state import MAX_GENERATE_RETRIES, GraphState
 
 
@@ -132,6 +133,11 @@ def make_compute_traceability_metrics_node(embeddings, chunk_texts_by_id: dict[s
             total_tokens=sum(event.tokens.total_tokens for event in state["trace_log"] if event.tokens),
             estimated_cost_usd=sum(event.tokens.estimated_cost_usd for event in state["trace_log"] if event.tokens),
         )
+        coverages = [
+            classify_citation_coverage(draft.cited_chunks, verification.supported, verification.issues)
+            for req_id, draft in drafts.items()
+            if (verification := state["verification"].get(req_id)) is not None
+        ]
         metrics = PipelineMetrics(
             total_duration_ms=sum(event.duration_ms for event in state["trace_log"]),
             total_tokens=total_tokens,
@@ -139,6 +145,7 @@ def make_compute_traceability_metrics_node(embeddings, chunk_texts_by_id: dict[s
             requirements_supported=sum(1 for v in state["verification"].values() if v.supported),
             requirements_needing_review=sum(1 for v in state["verification"].values() if not v.supported),
             hallucinated_citations_caught=state["hallucination_catches"],
+            **summarize_citation_coverage(coverages),
         )
 
         trace_event = TraceEvent(
