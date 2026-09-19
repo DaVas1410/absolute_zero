@@ -77,3 +77,17 @@ class FakeVectorstore:
             for chunk_id, text, score in candidates
         ]
         return documents_with_scores[:k]
+
+
+from fpdf import FPDF
+
+
+def make_pdf_bytes(text: str) -> bytes:
+    """Genera un PDF sintético en memoria para tests (fpdf2, sin red ni
+    archivos binarios versionados)."""
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    for line in text.splitlines():
+        pdf.multi_cell(0, 10, line)
+    return bytes(pdf.output())

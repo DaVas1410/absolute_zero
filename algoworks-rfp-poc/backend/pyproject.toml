@@ -15,11 +15,14 @@ dependencies = [
     "langchain-chroma",
     "sentence-transformers",
     "pydantic",
+    "pypdf",
+    "langchain-text-splitters",
 ]
 
 [dependency-groups]
 dev = [
     "pytest",
+    "fpdf2",
 ]
 
 [tool.uv]
