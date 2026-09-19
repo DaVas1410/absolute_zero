@@ -20,7 +20,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 load_dotenv()
 
-from api.schemas import CorpusIngestResult, PipelineResult, SectionType, TraceEvent
+from api.schemas import CorpusIngestResult, PipelineResult, ProposalDocument, SectionType, TraceEvent
+from graph.compose_graph import run_compose
 from graph.graph import run_pipeline
 from graph.llm import get_chat_llm
 from rag import corpus
@@ -124,6 +125,30 @@ def get_pipeline_runner() -> PipelineRunner:
     return _default_pipeline_runner
 
 
+ComposeRunner = Callable[[str], ProposalDocument]
+
+
+def _default_compose_runner(rfp_id: str) -> ProposalDocument:
+    result = _pipeline_results.get(rfp_id)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"No hay resultados disponibles para rfp_id={rfp_id!r}. "
+                "Ejecuta POST /rfp/process (o /rfp/process/pdf) primero."
+            ),
+        )
+    llm_large = get_chat_llm("large")
+    _vectorstore, _embeddings, chunk_texts_by_id = _get_corpus_resources()
+    return run_compose(
+        rfp_id, result.requirements, result.drafts, result.verification, llm_large, chunk_texts_by_id
+    )
+
+
+def get_compose_runner() -> ComposeRunner:
+    return _default_compose_runner
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -204,6 +229,14 @@ def get_trace(rfp_id: str) -> list[TraceEvent]:
             ),
         )
     return result.trace_log
+
+
+@app.post("/rfp/{rfp_id}/compose", response_model=ProposalDocument)
+def compose_proposal_endpoint(
+    rfp_id: str,
+    compose_runner: ComposeRunner = Depends(get_compose_runner),
+) -> ProposalDocument:
+    return compose_runner(rfp_id)
 
 
 @app.post("/rfp/{req_id}/feedback")

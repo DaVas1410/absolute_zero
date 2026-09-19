@@ -10,13 +10,17 @@ from datetime import datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 
-from api.main import app, get_corpus_resources, get_pipeline_runner
+from api.main import app, get_compose_runner, get_corpus_resources, get_pipeline_runner
 from api.schemas import (
     Chunk,
+    ComposeMetrics,
     CorpusIngestResult,
     DraftSection,
     PipelineMetrics,
     PipelineResult,
+    ProposalDocument,
+    ProposalSection,
+    ProposalSectionVerification,
     ReasoningPathAudit,
     Requirement,
     RetrievedChunk,
@@ -244,3 +248,66 @@ def test_process_rfp_pdf_rejects_empty_pdf():
     )
 
     assert response.status_code == 422
+
+
+def _fake_proposal_document(rfp_id: str) -> ProposalDocument:
+    now = datetime.now(timezone.utc)
+    return ProposalDocument(
+        rfp_id=rfp_id,
+        sections=[
+            ProposalSection(
+                heading="Solución propuesta",
+                body="Resumen [[chunk_001]].",
+                cited_chunks=["chunk_001"],
+                source_req_ids=["req_001"],
+            )
+        ],
+        verification=[
+            ProposalSectionVerification(
+                heading="Solución propuesta", supported=True, issues=[], confidence=0.9
+            )
+        ],
+        trace_log=[
+            TraceEvent(node=node, timestamp=now, input_summary="...", output_summary="...", reasoning="...")
+            for node in ["compose_proposal", "verify_proposal", "finalize_compose"]
+        ],
+        metrics=ComposeMetrics(
+            total_duration_ms=50.0,
+            total_tokens=TokenUsage(),
+            retries_used=0,
+            sections_supported=1,
+            sections_needing_review=0,
+            hallucinated_citations_caught=0,
+            hallucinated_citations_removed=0,
+        ),
+    )
+
+
+@pytest.fixture(autouse=True)
+def override_compose_runner():
+    app.dependency_overrides[get_compose_runner] = lambda: _fake_proposal_document
+    yield
+    app.dependency_overrides.clear()
+
+
+def test_compose_proposal_after_process_returns_document():
+    client.post("/rfp/process", json={"rfp_id": "rfp_compose_001", "rfp_text": "Texto de RFP de prueba."})
+
+    response = client.post("/rfp/rfp_compose_001/compose")
+
+    assert response.status_code == 200
+    result = ProposalDocument.model_validate(response.json())
+    assert result.rfp_id == "rfp_compose_001"
+    assert result.sections[0].heading == "Solución propuesta"
+    nodes = [event.node for event in result.trace_log]
+    assert nodes == ["compose_proposal", "verify_proposal", "finalize_compose"]
+
+
+def test_compose_proposal_unknown_rfp_returns_error_format():
+    app.dependency_overrides.pop(get_compose_runner, None)  # ejercitar el 404 real, no el override
+
+    response = client.post("/rfp/unknown_rfp/compose")
+
+    assert response.status_code == 404
+    body = response.json()
+    assert set(body.keys()) == {"error", "detail"}

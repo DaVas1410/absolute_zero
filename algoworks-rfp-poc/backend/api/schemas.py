@@ -108,3 +108,37 @@ class CorpusIngestResult(BaseModel):
     section_type: str
     chunks_added: list[Chunk]
     chunk_count: int
+
+
+class ProposalSection(BaseModel):
+    heading: str
+    body: str  # contiene marcadores [[chunk_id]] inline
+    cited_chunks: list[str]
+    source_req_ids: list[str]  # qué requisitos originales alimentaron esta sección
+
+
+class ProposalSectionVerification(BaseModel):
+    heading: str
+    supported: bool
+    issues: list[str]
+    confidence: float
+    reasoning: str = ""  # motivo del veredicto (verify_proposal)
+    retries_used: int = 0
+
+
+class ComposeMetrics(BaseModel):
+    total_duration_ms: float
+    total_tokens: TokenUsage
+    retries_used: int
+    sections_supported: int
+    sections_needing_review: int
+    hallucinated_citations_caught: int
+    hallucinated_citations_removed: int  # tras agotar reintentos, eliminadas en código
+
+
+class ProposalDocument(BaseModel):
+    rfp_id: str
+    sections: list[ProposalSection]
+    verification: list[ProposalSectionVerification]
+    trace_log: list[TraceEvent]
+    metrics: ComposeMetrics
