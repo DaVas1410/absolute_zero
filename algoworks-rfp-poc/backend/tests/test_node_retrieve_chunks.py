@@ -10,8 +10,8 @@ def test_retrieve_chunks_attaches_justification_per_candidate():
     vectorstore = FakeVectorstore(
         {
             "experiencia en retail": [
-                ("chunk_002", "Proyecto de retail.", 0.9),
-                ("chunk_001", "Proyecto de manufactura.", 0.5),
+                ("chunk_002", "Proyecto de retail.", 0.9, "Propuesta_ClienteRetail_2022.md"),
+                ("chunk_001", "Proyecto de manufactura.", 0.5, "Propuesta_ClienteManufactura_2023.md"),
             ]
         }
     )
@@ -25,6 +25,7 @@ def test_retrieve_chunks_attaches_justification_per_candidate():
     assert retrieved[0].score == 0.9
     assert retrieved[0].justification == "Justificación A."
     assert retrieved[1].justification == "Justificación B."
+    assert retrieved[0].source == "Propuesta_ClienteRetail_2022.md"
     assert len(result["trace_log"]) == 1
     assert result["trace_log"][0].node == "retrieve_chunks"
     assert result["trace_log"][0].duration_ms >= 0.0

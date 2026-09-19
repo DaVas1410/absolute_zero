@@ -67,13 +67,19 @@ class FakeVectorstore:
     devolviendo resultados preprogramados por texto de query exacto.
     """
 
-    def __init__(self, results_by_query: dict[str, list[tuple[str, str, float]]]):
+    def __init__(self, results_by_query: dict[str, list[tuple]]):
         self._results_by_query = results_by_query
 
     def similarity_search_with_relevance_scores(self, query: str, k: int = 4):
         candidates = self._results_by_query.get(query, [])
         documents_with_scores = [
-            (Document(page_content=text, metadata={"chunk_id": chunk_id}), score)
-            for chunk_id, text, score in candidates
+            (
+                Document(
+                    page_content=candidate[1],
+                    metadata={"chunk_id": candidate[0], "source": candidate[3] if len(candidate) > 3 else ""},
+                ),
+                candidate[2],
+            )
+            for candidate in candidates
         ]
         return documents_with_scores[:k]

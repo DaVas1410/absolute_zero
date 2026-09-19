@@ -35,9 +35,16 @@ def build_vectorstore(
     )
 
 
-def similarity_search(vectorstore: Chroma, query: str, k: int) -> list[tuple[str, str, float]]:
+def similarity_search(
+    vectorstore: Chroma, query: str, k: int
+) -> list[tuple[str, str, float, str]]:
     results = vectorstore.similarity_search_with_relevance_scores(query, k=k)
     return [
-        (document.metadata["chunk_id"], document.page_content, max(0.0, min(1.0, score)))
+        (
+            document.metadata["chunk_id"],
+            document.page_content,
+            max(0.0, min(1.0, score)),
+            document.metadata.get("source", ""),
+        )
         for document, score in results
     ]

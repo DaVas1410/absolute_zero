@@ -24,13 +24,15 @@ def make_retrieve_chunks_node(llm, vectorstore, top_k: int = DEFAULT_TOP_K):
         for requirement in state["requirements"]:
             candidates = similarity_search(vectorstore, requirement.text, k=top_k)
             retrieved_for_requirement = []
-            for chunk_id, chunk_text, score in candidates:
+            for chunk_id, chunk_text, score, source in candidates:
                 justification_prompt = prompt_template.format(
                     requirement_text=requirement.text, chunk_text=chunk_text
                 )
                 justification = invoke_tracked(llm, justification_prompt, accumulator)
                 retrieved_for_requirement.append(
-                    RetrievedChunk(chunk_id=chunk_id, score=score, justification=justification)
+                    RetrievedChunk(
+                        chunk_id=chunk_id, score=score, justification=justification, source=source
+                    )
                 )
             retrieved[requirement.req_id] = retrieved_for_requirement
 
