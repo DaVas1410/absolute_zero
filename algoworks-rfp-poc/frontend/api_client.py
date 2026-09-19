@@ -20,3 +20,28 @@ def check_health(base_url: str) -> bool:
         return response.ok
     except requests.exceptions.RequestException:
         return False
+
+
+def _raise_for_error_response(response: requests.Response) -> None:
+    if response.ok:
+        return
+    try:
+        body = response.json()
+        error = body.get("error", "Error")
+        detail = body.get("detail", response.text)
+    except ValueError:
+        error, detail = "Error", response.text
+    raise BackendError(error=error, detail=detail)
+
+
+def process_rfp(base_url: str, rfp_id: str, rfp_text: str, timeout: float = 120.0) -> dict:
+    try:
+        response = requests.post(
+            f"{base_url}/rfp/process",
+            json={"rfp_id": rfp_id, "rfp_text": rfp_text},
+            timeout=timeout,
+        )
+    except requests.exceptions.RequestException as exc:
+        raise BackendError(error="Connection Error", detail=str(exc)) from exc
+    _raise_for_error_response(response)
+    return response.json()
