@@ -4,6 +4,8 @@ grafo), para no depender de red ni de modelos reales en la suite.
 
 from types import SimpleNamespace
 
+from fpdf import FPDF
+from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
 
@@ -59,9 +61,6 @@ class ScriptedChatModel:
         return _StructuredRunnable()
 
 
-from langchain_core.documents import Document
-
-
 class FakeVectorstore:
     """Doble de Chroma: expone solo similarity_search_with_relevance_scores,
     devolviendo resultados preprogramados por texto de query exacto.
@@ -79,9 +78,6 @@ class FakeVectorstore:
         return documents_with_scores[:k]
 
 
-from fpdf import FPDF
-
-
 def make_pdf_bytes(text: str) -> bytes:
     """Genera un PDF sintético en memoria para tests (fpdf2, sin red ni
     archivos binarios versionados)."""
@@ -90,4 +86,12 @@ def make_pdf_bytes(text: str) -> bytes:
     pdf.set_font("Helvetica", size=12)
     for line in text.splitlines():
         pdf.multi_cell(0, 10, line)
+    return bytes(pdf.output())
+
+
+def make_empty_pdf_bytes() -> bytes:
+    """Genera un PDF sintético sin texto (una página en blanco), para tests
+    del caso "no se pudo extraer texto legible del PDF"."""
+    pdf = FPDF()
+    pdf.add_page()
     return bytes(pdf.output())

@@ -1,10 +1,9 @@
 """Tests de extracción de texto PDF y chunking (rag/pdf_ingest.py)."""
 
 import pytest
-from fpdf import FPDF
 
 from rag.pdf_ingest import chunk_pdf_text, extract_pdf_text
-from tests.fakes import make_pdf_bytes
+from tests.fakes import make_empty_pdf_bytes, make_pdf_bytes
 
 
 def test_extract_pdf_text_returns_page_text():
@@ -17,12 +16,15 @@ def test_extract_pdf_text_returns_page_text():
 
 
 def test_extract_pdf_text_raises_on_empty_pdf():
-    pdf = FPDF()
-    pdf.add_page()
-    empty_pdf_bytes = bytes(pdf.output())
+    empty_pdf_bytes = make_empty_pdf_bytes()
 
     with pytest.raises(ValueError):
         extract_pdf_text(empty_pdf_bytes)
+
+
+def test_extract_pdf_text_raises_value_error_on_non_pdf_bytes():
+    with pytest.raises(ValueError):
+        extract_pdf_text(b"this is not a pdf")
 
 
 def test_chunk_pdf_text_generates_sequential_chunk_ids():

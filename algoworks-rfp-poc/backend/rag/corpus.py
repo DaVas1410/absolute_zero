@@ -30,7 +30,15 @@ def load_ingested_chunks(path: Path = DEFAULT_INGESTED_PATH) -> list[Chunk]:
 
 
 def append_ingested_chunks(chunks: list[Chunk], path: Path = DEFAULT_INGESTED_PATH) -> None:
-    combined = load_ingested_chunks(path) + chunks
+    # Dedupe por chunk_id (gana el mas nuevo) para que el JSON en disco no
+    # acumule ids duplicados al re-ingestar el mismo PDF: Chroma.from_documents
+    # rechaza ids duplicados en un mismo batch (DuplicateIDError), lo que
+    # rompe el arranque del servidor en el proximo restart si no se dedupea
+    # aqui. El path de mutacion en vivo (add_chunks sobre un vectorstore ya
+    # corriendo) ya hace upsert correctamente via Chroma; esto lo iguala en disco.
+    by_id = {chunk.chunk_id: chunk for chunk in load_ingested_chunks(path)}
+    by_id.update({chunk.chunk_id: chunk for chunk in chunks})
+    combined = list(by_id.values())
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps([chunk.model_dump() for chunk in combined], ensure_ascii=False, indent=2),

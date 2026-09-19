@@ -25,7 +25,7 @@ from api.schemas import (
     VerificationResult,
 )
 from rag.store import build_vectorstore, similarity_search
-from tests.fakes import FakeEmbeddings, make_pdf_bytes
+from tests.fakes import FakeEmbeddings, make_empty_pdf_bytes, make_pdf_bytes
 
 client = TestClient(app)
 
@@ -207,11 +207,7 @@ def test_ingest_corpus_pdf_rejects_invalid_section_type():
 
 
 def test_ingest_corpus_pdf_rejects_empty_pdf():
-    from fpdf import FPDF
-
-    pdf = FPDF()
-    pdf.add_page()
-    empty_pdf_bytes = bytes(pdf.output())
+    empty_pdf_bytes = make_empty_pdf_bytes()
 
     response = client.post(
         "/corpus/ingest",
@@ -239,11 +235,7 @@ def test_process_rfp_pdf_returns_valid_pipeline_result():
 
 
 def test_process_rfp_pdf_rejects_empty_pdf():
-    from fpdf import FPDF
-
-    pdf = FPDF()
-    pdf.add_page()
-    empty_pdf_bytes = bytes(pdf.output())
+    empty_pdf_bytes = make_empty_pdf_bytes()
 
     response = client.post(
         "/rfp/process/pdf",

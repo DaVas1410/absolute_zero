@@ -137,14 +137,20 @@ def process_rfp(
 
 
 @app.post("/corpus/ingest", response_model=CorpusIngestResult)
-async def ingest_corpus_pdf(
+def ingest_corpus_pdf(
     file: UploadFile = File(...),
     section_type: SectionType = Form(...),
     source: str | None = Form(None),
     corpus_resources: CorpusResources = Depends(get_corpus_resources),
 ) -> CorpusIngestResult:
+    # def sincrona (no async): la extraccion PDF, el embedding y (en el otro
+    # endpoint) el pipeline completo son trabajo bloqueante de CPU/red. Con
+    # async def y sin await, ese trabajo corre directo en el event loop y
+    # congela todo el proceso (incluso /health) mientras dura. Starlette
+    # corre las funciones def sincronas en un threadpool automaticamente,
+    # igual que el process_rfp preexistente.
     vectorstore, _embeddings, chunk_texts_by_id = corpus_resources
-    file_bytes = await file.read()
+    file_bytes = file.file.read()
     resolved_source = source or file.filename or "documento.pdf"
 
     try:
@@ -166,12 +172,12 @@ async def ingest_corpus_pdf(
 
 
 @app.post("/rfp/process/pdf", response_model=PipelineResult)
-async def process_rfp_pdf(
+def process_rfp_pdf(
     file: UploadFile = File(...),
     rfp_id: str = Form(...),
     pipeline_runner: PipelineRunner = Depends(get_pipeline_runner),
 ) -> PipelineResult:
-    file_bytes = await file.read()
+    file_bytes = file.file.read()
 
     try:
         rfp_text = extract_pdf_text(file_bytes)

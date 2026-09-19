@@ -16,8 +16,20 @@ CHUNK_OVERLAP = 120
 
 
 def extract_pdf_text(file_bytes: bytes) -> str:
-    reader = PdfReader(BytesIO(file_bytes))
-    text = "\n\n".join(page.extract_text() or "" for page in reader.pages).strip()
+    try:
+        reader = PdfReader(BytesIO(file_bytes))
+        text = "\n\n".join(page.extract_text() or "" for page in reader.pages).strip()
+    except ValueError:
+        raise
+    except Exception as exc:
+        # pypdf lanza sus propias excepciones (PdfStreamError, EmptyFileError,
+        # etc.) que no heredan de ValueError. Los endpoints en api/main.py solo
+        # capturan ValueError para devolver 422; sin este wrapper, un archivo
+        # que no es un PDF (o uno corrupto/truncado) cae al handler generico y
+        # devuelve un 500 opaco en vez de un 422 claro.
+        raise ValueError(
+            "No se pudo leer el PDF (¿está corrupto o no es un PDF válido?)."
+        ) from exc
     if not text:
         raise ValueError(
             "No se pudo extraer texto legible del PDF "
