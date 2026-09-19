@@ -165,6 +165,24 @@ async def ingest_corpus_pdf(
     )
 
 
+@app.post("/rfp/process/pdf", response_model=PipelineResult)
+async def process_rfp_pdf(
+    file: UploadFile = File(...),
+    rfp_id: str = Form(...),
+    pipeline_runner: PipelineRunner = Depends(get_pipeline_runner),
+) -> PipelineResult:
+    file_bytes = await file.read()
+
+    try:
+        rfp_text = extract_pdf_text(file_bytes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    result = pipeline_runner(rfp_id, rfp_text)
+    _pipeline_results[rfp_id] = result
+    return result
+
+
 @app.get("/rfp/{rfp_id}/trace", response_model=list[TraceEvent])
 def get_trace(rfp_id: str) -> list[TraceEvent]:
     result = _pipeline_results.get(rfp_id)

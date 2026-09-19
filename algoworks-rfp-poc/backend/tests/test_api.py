@@ -222,3 +222,33 @@ def test_ingest_corpus_pdf_rejects_empty_pdf():
     assert response.status_code == 422
     body = response.json()
     assert set(body.keys()) == {"error", "detail"}
+
+
+def test_process_rfp_pdf_returns_valid_pipeline_result():
+    pdf_bytes = make_pdf_bytes("1. El proveedor debe tener experiencia previa en proyectos similares.")
+
+    response = client.post(
+        "/rfp/process/pdf",
+        files={"file": ("rfp.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"rfp_id": "rfp_pdf_001"},
+    )
+
+    assert response.status_code == 200
+    result = PipelineResult.model_validate(response.json())
+    assert result.rfp_id == "rfp_pdf_001"
+
+
+def test_process_rfp_pdf_rejects_empty_pdf():
+    from fpdf import FPDF
+
+    pdf = FPDF()
+    pdf.add_page()
+    empty_pdf_bytes = bytes(pdf.output())
+
+    response = client.post(
+        "/rfp/process/pdf",
+        files={"file": ("vacio.pdf", io.BytesIO(empty_pdf_bytes), "application/pdf")},
+        data={"rfp_id": "rfp_pdf_002"},
+    )
+
+    assert response.status_code == 422
