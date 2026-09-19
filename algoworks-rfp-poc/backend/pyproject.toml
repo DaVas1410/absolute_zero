@@ -18,6 +18,7 @@ dependencies = [
     "pypdf",
     "langchain-text-splitters",
     "python-multipart",
+    "python-dotenv",
 ]
 
 [dependency-groups]

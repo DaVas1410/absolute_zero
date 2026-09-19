@@ -8,6 +8,7 @@ from functools import lru_cache
 from http import HTTPStatus
 from typing import Callable
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +17,8 @@ from langchain_chroma import Chroma
 from langchain_core.embeddings import Embeddings
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
+load_dotenv()
 
 from api.schemas import CorpusIngestResult, PipelineResult, SectionType, TraceEvent
 from graph.graph import run_pipeline
