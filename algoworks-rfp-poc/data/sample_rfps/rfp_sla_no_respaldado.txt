@@ -1,0 +1,2 @@
+1. El proveedor debe describir su arquitectura para procesamiento de datos en tiempo real usando tecnologías de streaming.
+2. El proveedor debe garantizar una latencia end-to-end menor a 50 milisegundos en su plataforma de streaming, respaldada por un SLA contractual.

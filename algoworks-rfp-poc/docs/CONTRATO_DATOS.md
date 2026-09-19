@@ -65,12 +65,14 @@ similitud y una justificación en lenguaje natural de por qué fue recuperado.
 | `chunk_id`       | `str`   | Referencia al `Chunk` recuperado.                      |
 | `score`          | `float` | Score de similitud coseno.                             |
 | `justification`  | `str`   | Explicación en lenguaje natural de la relevancia.      |
+| `source`         | `str`   | Documento de origen del `Chunk` (aditivo, sub-project frontend). Default `""`. |
 
 ```json
 {
   "chunk_id": "chunk_001",
   "score": 0.87,
-  "justification": "El chunk describe experiencia previa relevante en integración de datos."
+  "justification": "El chunk describe experiencia previa relevante en integración de datos.",
+  "source": "Propuesta_ClienteX_2023.md"
 }
 ```
 
@@ -175,7 +177,8 @@ explicabilidad.
       {
         "chunk_id": "chunk_001",
         "score": 0.87,
-        "justification": "El chunk describe experiencia previa relevante en integración de datos."
+        "justification": "El chunk describe experiencia previa relevante en integración de datos.",
+        "source": "Propuesta_ClienteX_2023.md"
       }
     ]
   },

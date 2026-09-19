@@ -33,7 +33,8 @@ def test_similarity_search_returns_most_relevant_chunk_first():
 
     assert results[0][0] == "chunk_retail"
     assert len(results) == 2
-    assert all(isinstance(score, float) for _, _, score in results)
+    assert all(isinstance(score, float) for _, _, score, _ in results)
+    assert results[0][3] == "doc_b.md"
 
 
 def test_similarity_search_respects_k():
@@ -55,7 +56,7 @@ def test_similarity_search_clamps_negative_relevance_scores():
 
     results = similarity_search(vectorstore, "logistica manufactura", k=2)
 
-    assert all(0.0 <= score <= 1.0 for _, _, score in results)
+    assert all(0.0 <= score <= 1.0 for _, _, score, _ in results)
 
 
 def test_add_chunks_makes_new_chunk_retrievable():

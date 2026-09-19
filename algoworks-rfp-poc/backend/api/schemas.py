@@ -35,6 +35,7 @@ class RetrievedChunk(BaseModel):
     chunk_id: str
     score: float
     justification: str
+    source: str = ""  # ej. "Propuesta_ClienteX_2023.md" (aditivo, sub-project frontend)
 
 
 class CitationSimilarity(BaseModel):

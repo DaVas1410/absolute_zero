@@ -194,7 +194,7 @@ def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable(override_co
     # devuelve siempre la misma tupla capturada, igual que el lru_cache real).
     vectorstore, _embeddings, _chunk_texts_by_id = override_corpus_resources
     results = similarity_search(vectorstore, "manufactura", k=2)
-    retrieved_chunk_ids = [chunk_id for chunk_id, _text, _score in results]
+    retrieved_chunk_ids = [chunk_id for chunk_id, _text, _score, _source in results]
     assert "propuesta_manufactura_001" in retrieved_chunk_ids
 
 

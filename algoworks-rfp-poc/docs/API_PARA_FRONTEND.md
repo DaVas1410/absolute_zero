@@ -74,13 +74,13 @@ Dispara el pipeline (mockeado por ahora) y devuelve un `PipelineResult` completo
   ],
   "retrieved": {
     "req_001": [
-      { "chunk_id": "chunk_001", "score": 0.89, "justification": "El chunk describe un proyecto de integración de datos de alcance comparable, incluyendo volumen de datos y timeline." },
-      { "chunk_id": "chunk_002", "score": 0.76, "justification": "Menciona experiencia previa con el mismo tipo de cliente (sector retail), relevante para el requisito de experiencia." },
-      { "chunk_id": "chunk_003", "score": 0.61, "justification": "Relacionado tangencialmente: describe un proyecto de migración de datos, no de integración, pero comparte stack." }
+      { "chunk_id": "chunk_001", "score": 0.89, "justification": "El chunk describe un proyecto de integración de datos de alcance comparable, incluyendo volumen de datos y timeline.", "source": "Propuesta_ClienteManufactura_2023.md" },
+      { "chunk_id": "chunk_002", "score": 0.76, "justification": "Menciona experiencia previa con el mismo tipo de cliente (sector retail), relevante para el requisito de experiencia.", "source": "Propuesta_ClienteRetail_2022.md" },
+      { "chunk_id": "chunk_003", "score": 0.61, "justification": "Relacionado tangencialmente: describe un proyecto de migración de datos, no de integración, pero comparte stack.", "source": "Propuesta_ClienteLogistica_2021.md" }
     ],
     "req_002": [
-      { "chunk_id": "chunk_004", "score": 0.83, "justification": "Describe la arquitectura de referencia de Algoworks para pipelines de datos en tiempo real (Kafka + Spark Streaming)." },
-      { "chunk_id": "chunk_005", "score": 0.70, "justification": "Detalla las certificaciones técnicas del equipo en plataformas de streaming de datos." }
+      { "chunk_id": "chunk_004", "score": 0.83, "justification": "Describe la arquitectura de referencia de Algoworks para pipelines de datos en tiempo real (Kafka + Spark Streaming).", "source": "Capacidades_Tecnicas_Algoworks.md" },
+      { "chunk_id": "chunk_005", "score": 0.70, "justification": "Detalla las certificaciones técnicas del equipo en plataformas de streaming de datos.", "source": "Equipo_Algoworks.md" }
     ]
   },
   "drafts": {
