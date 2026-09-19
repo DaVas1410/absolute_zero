@@ -5,7 +5,7 @@ import pytest
 import responses
 from requests.exceptions import ConnectionError
 
-from api_client import BackendError, check_health, process_rfp
+from api_client import BackendError, check_health, process_rfp, get_trace, submit_feedback
 
 BASE_URL = "http://localhost:8000"
 
@@ -70,3 +70,46 @@ def test_process_rfp_raises_backend_error_on_connection_failure():
         process_rfp(BASE_URL, "rfp_001", "texto")
 
     assert exc_info.value.error == "Connection Error"
+
+
+@responses.activate
+def test_get_trace_returns_parsed_json_on_success():
+    fake_trace = [{"node": "extract_requirements", "reasoning": "..."}]
+    responses.add(responses.GET, f"{BASE_URL}/rfp/rfp_001/trace", json=fake_trace, status=200)
+
+    assert get_trace(BASE_URL, "rfp_001") == fake_trace
+
+
+@responses.activate
+def test_get_trace_raises_backend_error_on_404():
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/rfp/unknown/trace",
+        json={"error": "Not Found", "detail": "no hay trace"},
+        status=404,
+    )
+
+    with pytest.raises(BackendError) as exc_info:
+        get_trace(BASE_URL, "unknown")
+
+    assert exc_info.value.detail == "no hay trace"
+
+
+@responses.activate
+def test_submit_feedback_returns_parsed_json_on_success():
+    responses.add(responses.POST, f"{BASE_URL}/rfp/req_001/feedback", json={"status": "received"}, status=200)
+
+    assert submit_feedback(BASE_URL, "req_001", True) == {"status": "received"}
+
+
+@responses.activate
+def test_submit_feedback_raises_backend_error_on_5xx():
+    responses.add(
+        responses.POST,
+        f"{BASE_URL}/rfp/req_001/feedback",
+        json={"error": "Internal Server Error", "detail": "boom"},
+        status=500,
+    )
+
+    with pytest.raises(BackendError):
+        submit_feedback(BASE_URL, "req_001", False)

@@ -45,3 +45,25 @@ def process_rfp(base_url: str, rfp_id: str, rfp_text: str, timeout: float = 120.
         raise BackendError(error="Connection Error", detail=str(exc)) from exc
     _raise_for_error_response(response)
     return response.json()
+
+
+def get_trace(base_url: str, rfp_id: str, timeout: float = DEFAULT_TIMEOUT) -> list[dict]:
+    try:
+        response = requests.get(f"{base_url}/rfp/{rfp_id}/trace", timeout=timeout)
+    except requests.exceptions.RequestException as exc:
+        raise BackendError(error="Connection Error", detail=str(exc)) from exc
+    _raise_for_error_response(response)
+    return response.json()
+
+
+def submit_feedback(base_url: str, req_id: str, accepted: bool, timeout: float = DEFAULT_TIMEOUT) -> dict:
+    try:
+        response = requests.post(
+            f"{base_url}/rfp/{req_id}/feedback",
+            json={"accepted": accepted},
+            timeout=timeout,
+        )
+    except requests.exceptions.RequestException as exc:
+        raise BackendError(error="Connection Error", detail=str(exc)) from exc
+    _raise_for_error_response(response)
+    return response.json()
