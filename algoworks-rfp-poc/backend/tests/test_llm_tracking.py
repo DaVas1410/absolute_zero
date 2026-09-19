@@ -78,9 +78,11 @@ class _StructuredLLM:
         self._parsed = parsed
         self._parsing_error = parsing_error
         self.received_include_raw = None
+        self.received_method = None
 
-    def with_structured_output(self, schema, include_raw: bool = False):
+    def with_structured_output(self, schema, method: str = "function_calling", include_raw: bool = False):
         self.received_include_raw = include_raw
+        self.received_method = method
         outer = self
 
         class _Runnable:
@@ -102,6 +104,7 @@ def test_invoke_structured_tracked_returns_parsed_and_accumulates_usage():
 
     assert result is parsed
     assert llm.received_include_raw is True
+    assert llm.received_method == "json_schema"
     assert accumulator.total().total_tokens == 15
 
 

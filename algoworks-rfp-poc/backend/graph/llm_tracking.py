@@ -12,11 +12,14 @@ from api.schemas import TokenUsage
 # USD por millón de tokens (input, output). Tabla chica y aproximada, solo
 # para los modelos Groq configurados via env vars; cualquier otro
 # model_name (Ollama, vacío, desconocido) cotiza en 0.0.
-_DEFAULT_GROQ_MODEL_SMALL = "llama-3.1-8b-instant"
-_DEFAULT_GROQ_MODEL_LARGE = "llama-3.3-70b-versatile"
+# NOTA: llama-3.1-8b-instant / llama-3.3-70b-versatile (los defaults
+# originales del plan) fueron descontinuados del catálogo de Groq; se
+# reemplazaron por los modelos openai/gpt-oss-* confirmados funcionando.
+_DEFAULT_GROQ_MODEL_SMALL = "openai/gpt-oss-20b"
+_DEFAULT_GROQ_MODEL_LARGE = "openai/gpt-oss-120b"
 _PRICE_PER_MILLION_TOKENS_USD: dict[str, tuple[float, float]] = {
-    _DEFAULT_GROQ_MODEL_SMALL: (0.05, 0.08),
-    _DEFAULT_GROQ_MODEL_LARGE: (0.59, 0.79),
+    _DEFAULT_GROQ_MODEL_SMALL: (0.075, 0.30),
+    _DEFAULT_GROQ_MODEL_LARGE: (0.15, 0.60),
 }
 
 
@@ -63,7 +66,13 @@ def invoke_tracked(llm, prompt: str, accumulator: TokenAccumulator) -> str:
 
 
 def invoke_structured_tracked(llm, schema: type[BaseModel], prompt: str, accumulator: TokenAccumulator):
-    response = llm.with_structured_output(schema, include_raw=True).invoke(prompt)
+    # method="json_schema" en vez del default "function_calling": los modelos
+    # openai/gpt-oss-* de Groq a veces devuelven texto plano en lugar de
+    # invocar la tool cuando se fuerza function-calling (error 400
+    # "tool_use_failed"), reproducido en pruebas manuales. json_schema usa
+    # el soporte nativo de "structured_outputs" de estos modelos y es
+    # confiable en la práctica.
+    response = llm.with_structured_output(schema, method="json_schema", include_raw=True).invoke(prompt)
     accumulator.add(_tracked_usage(response["raw"]))
     if response["parsing_error"] is not None:
         raise response["parsing_error"]

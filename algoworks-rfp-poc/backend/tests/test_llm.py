@@ -12,7 +12,7 @@ class _FailingLLM:
     def invoke(self, prompt):
         raise RuntimeError("sin conectividad")
 
-    def with_structured_output(self, schema, include_raw: bool = False):
+    def with_structured_output(self, schema, method: str = "function_calling", include_raw: bool = False):
         raise RuntimeError("sin conectividad")
 
 
@@ -21,13 +21,15 @@ class _OkLLM:
         self._label = label
         self.calls = 0
         self.received_include_raw = None
+        self.received_method = None
 
     def invoke(self, prompt):
         self.calls += 1
         return SimpleNamespace(content=self._label)
 
-    def with_structured_output(self, schema, include_raw: bool = False):
+    def with_structured_output(self, schema, method: str = "function_calling", include_raw: bool = False):
         self.received_include_raw = include_raw
+        self.received_method = method
         parent = self
 
         class _Structured:
@@ -74,6 +76,18 @@ def test_with_structured_output_forwards_include_raw_to_both_models():
     model.with_structured_output(object, include_raw=True)
 
     assert primary.received_include_raw is True
+    assert fallback.received_include_raw is True
+
+
+def test_with_structured_output_forwards_method_to_both_models():
+    primary = _OkLLM("primary")
+    fallback = _OkLLM("fallback")
+    model = FallbackChatModel(primary, fallback)
+
+    model.with_structured_output(object, method="json_schema", include_raw=True)
+
+    assert primary.received_method == "json_schema"
+    assert fallback.received_method == "json_schema"
 
 
 def test_get_chat_llm_builds_groq_primary_and_ollama_fallback(monkeypatch):

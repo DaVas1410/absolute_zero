@@ -71,8 +71,8 @@ class _RecordingChatModel:
         self._inner = inner
         self.prompts: list[str] = []
 
-    def with_structured_output(self, schema, include_raw: bool = False):
-        inner_runnable = self._inner.with_structured_output(schema, include_raw=include_raw)
+    def with_structured_output(self, schema, method: str = "function_calling", include_raw: bool = False):
+        inner_runnable = self._inner.with_structured_output(schema, method=method, include_raw=include_raw)
 
         class _Wrapped:
             def invoke(_self, prompt: str):

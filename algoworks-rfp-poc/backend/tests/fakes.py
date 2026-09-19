@@ -42,7 +42,7 @@ class ScriptedChatModel:
         text = self._plain_responses.pop(0)
         return SimpleNamespace(content=text)
 
-    def with_structured_output(self, schema, include_raw: bool = False):
+    def with_structured_output(self, schema, method: str = "function_calling", include_raw: bool = False):
         outer = self
 
         class _StructuredRunnable:
