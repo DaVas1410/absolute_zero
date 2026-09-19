@@ -60,6 +60,19 @@ def test_invoke_falls_back_when_primary_raises():
     assert response.content == "fallback"
 
 
+def test_invoke_raises_combined_error_when_primary_and_fallback_both_fail():
+    model = FallbackChatModel(_FailingLLM(), _FailingLLM())
+
+    with pytest.raises(RuntimeError) as exc_info:
+        model.invoke("prompt")
+
+    message = str(exc_info.value)
+    assert "primario (Groq)" in message
+    assert "fallback (Ollama)" in message
+    assert "sin conectividad" in message
+    assert isinstance(exc_info.value.__cause__, RuntimeError)
+
+
 def test_with_structured_output_falls_back_when_primary_raises():
     model = FallbackChatModel(_FailingLLM(), _OkLLM("fallback"))
 
