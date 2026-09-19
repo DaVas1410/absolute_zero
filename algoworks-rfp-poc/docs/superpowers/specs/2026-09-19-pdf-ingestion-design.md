@@ -103,8 +103,10 @@ Per the project's hackathon testing-scope philosophy (test high-risk logic,
 skip trivial wiring — see punch-list precedent in `docs/superpowers/plans/`):
 
 - `backend/tests/test_pdf_ingest.py` — `extract_pdf_text` / `chunk_pdf_text`
-  against a small committed fixture PDF (`backend/tests/fixtures/sample_proposal.pdf`,
-  synthetic content, generated during implementation); covers the
+  against a small synthetic PDF generated in-memory at test time (via
+  `fpdf2`, a new dev-only dependency, exposed as `tests/fakes.py::make_pdf_bytes`
+  per the project's existing shared-test-double convention) rather than a
+  committed binary fixture — avoids binary diffs in git; covers the
   empty-text-PDF error path.
 - `backend/tests/test_api.py` additions — one happy-path test per new
   endpoint: `/corpus/ingest` asserts the returned chunks are then actually
