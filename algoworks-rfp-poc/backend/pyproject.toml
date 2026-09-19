@@ -1,0 +1,29 @@
+[project]
+name = "algoworks-rfp-backend"
+version = "0.1.0"
+description = "Backend (LangGraph, RAG, API) del PoC de RFP para Algoworks"
+authors = [
+    { name = "Juan Daniel Vasconez Vela", email = "juan.vasconezvela@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "langgraph",
+    "langchain-groq",
+    "langchain-ollama",
+    "langchain-chroma",
+    "sentence-transformers",
+    "pydantic",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
