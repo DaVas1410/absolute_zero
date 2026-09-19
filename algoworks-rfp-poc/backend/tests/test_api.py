@@ -4,13 +4,16 @@ respuestas cumplan el schema Pydantic correspondiente. El pipeline real
 dependency override, para que la suite no dependa de red ni credenciales.
 """
 
+import io
 from datetime import datetime, timezone
 
 import pytest
 from fastapi.testclient import TestClient
 
-from api.main import app, get_pipeline_runner
+from api.main import app, get_corpus_resources, get_pipeline_runner
 from api.schemas import (
+    Chunk,
+    CorpusIngestResult,
     DraftSection,
     PipelineMetrics,
     PipelineResult,
@@ -21,6 +24,8 @@ from api.schemas import (
     TraceEvent,
     VerificationResult,
 )
+from rag.store import build_vectorstore
+from tests.fakes import FakeEmbeddings, make_pdf_bytes
 
 client = TestClient(app)
 
@@ -70,6 +75,34 @@ def _fake_pipeline_runner(rfp_id: str, rfp_text: str) -> PipelineResult:
 @pytest.fixture(autouse=True)
 def override_pipeline_runner():
     app.dependency_overrides[get_pipeline_runner] = lambda: _fake_pipeline_runner
+    yield
+    app.dependency_overrides.clear()
+
+
+_CORPUS_VOCABULARY = ["kafka", "manufactura", "retail"]
+
+
+def _fake_corpus_resources():
+    chunks = [
+        Chunk(
+            chunk_id="chunk_seed",
+            text="Chunk semilla sobre kafka.",
+            source="seed.md",
+            section_type="capacidades_tecnicas",
+        )
+    ]
+    embeddings = FakeEmbeddings(_CORPUS_VOCABULARY)
+    vectorstore = build_vectorstore(chunks, embeddings)
+    chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
+    return vectorstore, embeddings, chunk_texts_by_id
+
+
+@pytest.fixture(autouse=True)
+def override_corpus_resources(tmp_path, monkeypatch):
+    import rag.corpus as corpus_module
+
+    monkeypatch.setattr(corpus_module, "DEFAULT_INGESTED_PATH", tmp_path / "ingested_chunks.json")
+    app.dependency_overrides[get_corpus_resources] = _fake_corpus_resources
     yield
     app.dependency_overrides.clear()
 
@@ -124,3 +157,50 @@ def test_feedback_endpoint():
 
     assert response.status_code == 200
     assert response.json() == {"status": "received"}
+
+
+def test_ingest_corpus_pdf_returns_chunks_and_makes_them_retrievable():
+    pdf_bytes = make_pdf_bytes("Algoworks tiene experiencia en proyectos de manufactura.")
+
+    response = client.post(
+        "/corpus/ingest",
+        files={"file": ("propuesta_manufactura.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"section_type": "experiencia_previa"},
+    )
+
+    assert response.status_code == 200
+    result = CorpusIngestResult.model_validate(response.json())
+    assert result.source == "propuesta_manufactura.pdf"
+    assert result.section_type == "experiencia_previa"
+    assert result.chunk_count >= 1
+    assert result.chunks_added[0].chunk_id == "propuesta_manufactura_001"
+
+
+def test_ingest_corpus_pdf_rejects_invalid_section_type():
+    pdf_bytes = make_pdf_bytes("Contenido de prueba.")
+
+    response = client.post(
+        "/corpus/ingest",
+        files={"file": ("doc.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"section_type": "no_es_un_tipo_valido"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_ingest_corpus_pdf_rejects_empty_pdf():
+    from fpdf import FPDF
+
+    pdf = FPDF()
+    pdf.add_page()
+    empty_pdf_bytes = bytes(pdf.output())
+
+    response = client.post(
+        "/corpus/ingest",
+        files={"file": ("vacio.pdf", io.BytesIO(empty_pdf_bytes), "application/pdf")},
+        data={"section_type": "experiencia_previa"},
+    )
+
+    assert response.status_code == 422
+    body = response.json()
+    assert set(body.keys()) == {"error", "detail"}

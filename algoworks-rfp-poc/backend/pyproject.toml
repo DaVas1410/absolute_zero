@@ -17,6 +17,7 @@ dependencies = [
     "pydantic",
     "pypdf",
     "langchain-text-splitters",
+    "python-multipart",
 ]
 
 [dependency-groups]

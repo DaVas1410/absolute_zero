@@ -8,19 +8,22 @@ from functools import lru_cache
 from http import HTTPStatus
 from typing import Callable
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from langchain_chroma import Chroma
+from langchain_core.embeddings import Embeddings
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.schemas import PipelineResult, TraceEvent
+from api.schemas import CorpusIngestResult, PipelineResult, SectionType, TraceEvent
 from graph.graph import run_pipeline
 from graph.llm import get_chat_llm
-from rag.corpus import load_dummy_chunks
+from rag import corpus
 from rag.embed import SentenceTransformerEmbeddings
-from rag.store import build_vectorstore
+from rag.pdf_ingest import chunk_pdf_text, extract_pdf_text
+from rag.store import add_chunks, build_vectorstore
 
 logger = logging.getLogger("algoworks_rfp_api")
 
@@ -85,11 +88,18 @@ PipelineRunner = Callable[[str, str], PipelineResult]
 
 @lru_cache(maxsize=1)
 def _get_corpus_resources():
-    chunks = load_dummy_chunks()
+    chunks = corpus.load_dummy_chunks() + corpus.load_ingested_chunks(corpus.DEFAULT_INGESTED_PATH)
     embeddings = SentenceTransformerEmbeddings()
     vectorstore = build_vectorstore(chunks, embeddings)
     chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
     return vectorstore, embeddings, chunk_texts_by_id
+
+
+CorpusResources = tuple[Chroma, Embeddings, dict[str, str]]
+
+
+def get_corpus_resources() -> CorpusResources:
+    return _get_corpus_resources()
 
 
 @app.on_event("startup")
@@ -124,6 +134,35 @@ def process_rfp(
     result = pipeline_runner(payload.rfp_id, payload.rfp_text)
     _pipeline_results[payload.rfp_id] = result
     return result
+
+
+@app.post("/corpus/ingest", response_model=CorpusIngestResult)
+async def ingest_corpus_pdf(
+    file: UploadFile = File(...),
+    section_type: SectionType = Form(...),
+    source: str | None = Form(None),
+    corpus_resources: CorpusResources = Depends(get_corpus_resources),
+) -> CorpusIngestResult:
+    vectorstore, _embeddings, chunk_texts_by_id = corpus_resources
+    file_bytes = await file.read()
+    resolved_source = source or file.filename or "documento.pdf"
+
+    try:
+        text = extract_pdf_text(file_bytes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    chunks = chunk_pdf_text(text, source=resolved_source, section_type=section_type)
+    add_chunks(vectorstore, chunks)
+    chunk_texts_by_id.update({chunk.chunk_id: chunk.text for chunk in chunks})
+    corpus.append_ingested_chunks(chunks, path=corpus.DEFAULT_INGESTED_PATH)
+
+    return CorpusIngestResult(
+        source=resolved_source,
+        section_type=section_type,
+        chunks_added=chunks,
+        chunk_count=len(chunks),
+    )
 
 
 @app.get("/rfp/{rfp_id}/trace", response_model=list[TraceEvent])
