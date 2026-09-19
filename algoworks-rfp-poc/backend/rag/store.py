@@ -32,6 +32,14 @@ def build_vectorstore(
         ids=ids,
         collection_name=COLLECTION_NAME,
         persist_directory=persist_directory,
+        # Los embeddings de SentenceTransformerEmbeddings vienen normalizados
+        # (norma unitaria); sin fijar el espacio de distancia a coseno, Chroma
+        # usa L2 por defecto y su relevance_score_fn asume una escala de
+        # distancia mucho menor, produciendo scores negativos para
+        # practicamente todos los resultados (se ven truncados a 0.0 en
+        # similarity_search). Coseno + embeddings normalizados da scores
+        # de relevancia consistentes sin importar el modelo usado.
+        collection_metadata={"hnsw:space": "cosine"},
     )
 
 
