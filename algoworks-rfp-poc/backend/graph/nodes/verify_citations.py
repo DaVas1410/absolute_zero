@@ -24,17 +24,29 @@ class _NliVerdict(BaseModel):
     reasoning: str
 
 
-def _build_chunks_block(cited_chunks: list[str], retrieved_chunks: list[RetrievedChunk]) -> str:
+def _build_chunks_block(
+    cited_chunks: list[str],
+    retrieved_chunks: list[RetrievedChunk],
+    chunk_texts_by_id: dict[str, str] | None = None,
+) -> str:
     chunk_by_id = {chunk.chunk_id: chunk for chunk in retrieved_chunks}
+
+    def _text_for(chunk_id: str) -> str:
+        if chunk_texts_by_id is not None and chunk_id in chunk_texts_by_id:
+            return chunk_texts_by_id[chunk_id]
+        return chunk_by_id[chunk_id].justification
+
     lines = [
-        f"- {chunk_id}: {chunk_by_id[chunk_id].justification}"
+        f"- {chunk_id}: {_text_for(chunk_id)}"
         for chunk_id in cited_chunks
         if chunk_id in chunk_by_id
     ]
     return "\n".join(lines)
 
 
-def make_verify_citations_node(llm, max_retries: int = MAX_GENERATE_RETRIES):
+def make_verify_citations_node(
+    llm, max_retries: int = MAX_GENERATE_RETRIES, chunk_texts_by_id: dict[str, str] | None = None
+):
     prompt_template = load_prompt("verify_citations.txt")
 
     def verify_citations(state: GraphState) -> dict:
@@ -64,7 +76,9 @@ def make_verify_citations_node(llm, max_retries: int = MAX_GENERATE_RETRIES):
             else:
                 prompt = prompt_template.format(
                     draft_text=draft.text,
-                    chunks_block=_build_chunks_block(draft.cited_chunks, state["retrieved"].get(req_id, [])),
+                    chunks_block=_build_chunks_block(
+                        draft.cited_chunks, state["retrieved"].get(req_id, []), chunk_texts_by_id
+                    ),
                 )
                 verdict = invoke_structured_tracked(llm, _NliVerdict, prompt, accumulator)
                 result = VerificationResult(

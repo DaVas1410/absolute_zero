@@ -15,14 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.schemas import (
-    DraftSection,
-    PipelineResult,
-    Requirement,
-    RetrievedChunk,
-    TraceEvent,
-    VerificationResult,
-)
+from api.schemas import PipelineResult, TraceEvent
 from graph.graph import run_pipeline
 from graph.llm import get_chat_llm
 from rag.corpus import load_dummy_chunks
@@ -82,8 +75,8 @@ class FeedbackRequest(BaseModel):
     accepted: bool
 
 
-# Guarda en memoria el último PipelineResult mockeado por rfp_id, para que
-# GET /rfp/{rfp_id}/trace pueda devolver su trace_log.
+# Guarda en memoria el último PipelineResult real (no mockeado) por rfp_id,
+# para que GET /rfp/{rfp_id}/trace pueda devolver su trace_log.
 _pipeline_results: dict[str, PipelineResult] = {}
 
 
@@ -97,6 +90,14 @@ def _get_corpus_resources():
     vectorstore = build_vectorstore(chunks, embeddings)
     chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
     return vectorstore, embeddings, chunk_texts_by_id
+
+
+@app.on_event("startup")
+def _warm_up_corpus_resources() -> None:
+    # Precalienta embeddings + vectorstore en el arranque (en vez de en el
+    # primer POST /rfp/process) para no pagar el costo (descarga del modelo
+    # de embeddings, indexado de Chroma) en la primera request de una demo.
+    _get_corpus_resources()
 
 
 def _default_pipeline_runner(rfp_id: str, rfp_text: str) -> PipelineResult:

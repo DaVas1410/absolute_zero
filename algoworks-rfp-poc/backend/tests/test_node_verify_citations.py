@@ -63,6 +63,39 @@ def test_unsupported_verdict_exhausts_retry_budget():
     assert result["pending_req_ids"] == []
 
 
+class _RecordingChatModel:
+    """Envuelve un ScriptedChatModel y guarda los prompts que recibió, para
+    poder inspeccionar qué texto de chunk terminó realmente en el prompt."""
+
+    def __init__(self, inner: ScriptedChatModel):
+        self._inner = inner
+        self.prompts: list[str] = []
+
+    def with_structured_output(self, schema, include_raw: bool = False):
+        inner_runnable = self._inner.with_structured_output(schema, include_raw=include_raw)
+
+        class _Wrapped:
+            def invoke(_self, prompt: str):
+                self.prompts.append(prompt)
+                return inner_runnable.invoke(prompt)
+
+        return _Wrapped()
+
+
+def test_verify_citations_uses_real_chunk_text_when_provided():
+    draft = DraftSection(req_id="req_001", text="Texto [[chunk_001]].", cited_chunks=["chunk_001"])
+    verdict = SimpleNamespace(supported=True, issues=[], confidence=0.9, reasoning="El chunk respalda la afirmación.")
+    llm = _RecordingChatModel(ScriptedChatModel(structured_responses=[verdict]))
+    chunk_texts_by_id = {"chunk_001": "Texto real y específico del chunk, no la justificación."}
+    node = make_verify_citations_node(llm, chunk_texts_by_id=chunk_texts_by_id)
+
+    node(_base_state("req_001", draft, hallucinated=[]))
+
+    assert len(llm.prompts) == 1
+    assert "Texto real y específico del chunk" in llm.prompts[0]
+    assert "Relevante." not in llm.prompts[0]
+
+
 def test_should_retry_routes_to_generate_draft_when_pending():
     assert should_retry({"pending_req_ids": ["req_001"]}) == "generate_draft"
 

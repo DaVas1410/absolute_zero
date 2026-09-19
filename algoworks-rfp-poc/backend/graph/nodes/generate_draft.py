@@ -20,11 +20,18 @@ class _DraftOutput(BaseModel):
     reasoning: str
 
 
-def _build_chunks_block(chunks: list[RetrievedChunk]) -> str:
-    return "\n".join(f"- {chunk.chunk_id}: {chunk.justification}" for chunk in chunks)
+def _build_chunks_block(
+    chunks: list[RetrievedChunk], chunk_texts_by_id: dict[str, str] | None = None
+) -> str:
+    def _text_for(chunk: RetrievedChunk) -> str:
+        if chunk_texts_by_id is not None:
+            return chunk_texts_by_id.get(chunk.chunk_id, chunk.justification)
+        return chunk.justification
+
+    return "\n".join(f"- {chunk.chunk_id}: {_text_for(chunk)}" for chunk in chunks)
 
 
-def make_generate_draft_node(llm):
+def make_generate_draft_node(llm, chunk_texts_by_id: dict[str, str] | None = None):
     prompt_template = load_prompt("generate_draft.txt")
 
     def generate_draft(state: GraphState) -> dict:
@@ -42,7 +49,7 @@ def make_generate_draft_node(llm):
 
             prompt = prompt_template.format(
                 requirement_text=requirement.text,
-                chunks_block=_build_chunks_block(retrieved_chunks),
+                chunks_block=_build_chunks_block(retrieved_chunks, chunk_texts_by_id),
             )
             output = invoke_structured_tracked(llm, _DraftOutput, prompt, accumulator)
             draft_text = output.draft_text.strip()

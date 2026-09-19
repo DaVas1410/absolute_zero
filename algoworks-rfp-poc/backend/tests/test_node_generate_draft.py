@@ -43,6 +43,41 @@ def test_generate_draft_records_valid_citation():
     assert result["trace_log"][0].duration_ms >= 0.0
 
 
+class _RecordingChatModel:
+    """Envuelve un ScriptedChatModel y guarda los prompts que recibió, para
+    poder inspeccionar qué texto de chunk terminó realmente en el prompt."""
+
+    def __init__(self, inner: ScriptedChatModel):
+        self._inner = inner
+        self.prompts: list[str] = []
+
+    def with_structured_output(self, schema, include_raw: bool = False):
+        inner_runnable = self._inner.with_structured_output(schema, include_raw=include_raw)
+
+        class _Wrapped:
+            def invoke(_self, prompt: str):
+                self.prompts.append(prompt)
+                return inner_runnable.invoke(prompt)
+
+        return _Wrapped()
+
+
+def test_generate_draft_uses_real_chunk_text_when_provided():
+    draft_output = SimpleNamespace(
+        draft_text="Texto con cita [[chunk_001]].",
+        reasoning="Se usó chunk_001.",
+    )
+    llm = _RecordingChatModel(ScriptedChatModel(structured_responses=[draft_output]))
+    chunk_texts_by_id = {"chunk_001": "Texto real y específico del chunk, no la justificación."}
+    node = make_generate_draft_node(llm, chunk_texts_by_id)
+
+    node(_state_for("req_001"))
+
+    assert len(llm.prompts) == 1
+    assert "Texto real y específico del chunk" in llm.prompts[0]
+    assert "Relevante." not in llm.prompts[0]
+
+
 def test_generate_draft_flags_hallucinated_citation_and_increments_running_total():
     draft_output = SimpleNamespace(
         draft_text="Texto con cita inventada [[chunk_099]].",

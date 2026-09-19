@@ -43,3 +43,16 @@ def test_similarity_search_respects_k():
 
     assert len(results) == 1
     assert results[0][0] == "chunk_kafka"
+
+
+def test_similarity_search_clamps_negative_relevance_scores():
+    # Una query cuyas palabras del vocabulario ("logistica", "manufactura")
+    # no aparecen en ningun chunk produce, con este embeddings de prueba,
+    # un relevance_score negativo real de Chroma (repro: ~-1.12).
+    # similarity_search debe recortarlo a 0.0 para no exponer una
+    # "confianza" de retrieval negativa.
+    vectorstore = build_vectorstore(_sample_chunks(), FakeEmbeddings(VOCABULARY))
+
+    results = similarity_search(vectorstore, "logistica manufactura", k=2)
+
+    assert all(0.0 <= score <= 1.0 for _, _, score in results)

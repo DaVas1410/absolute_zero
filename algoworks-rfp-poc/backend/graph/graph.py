@@ -9,11 +9,9 @@ from api.schemas import PipelineResult
 from graph.nodes.compute_traceability_metrics import make_compute_traceability_metrics_node
 from graph.nodes.extract_requirements import make_extract_requirements_node
 from graph.nodes.generate_draft import make_generate_draft_node
-from graph.nodes.retrieve_chunks import make_retrieve_chunks_node
+from graph.nodes.retrieve_chunks import DEFAULT_TOP_K, make_retrieve_chunks_node
 from graph.nodes.verify_citations import make_verify_citations_node, should_retry
 from graph.state import GraphState
-
-DEFAULT_TOP_K = 3
 
 
 def build_graph(
@@ -27,8 +25,11 @@ def build_graph(
     graph = StateGraph(GraphState)
     graph.add_node("extract_requirements", make_extract_requirements_node(llm_small))
     graph.add_node("retrieve_chunks", make_retrieve_chunks_node(llm_small, vectorstore, top_k))
-    graph.add_node("generate_draft", make_generate_draft_node(llm_large))
-    graph.add_node("verify_citations", make_verify_citations_node(llm_large))
+    graph.add_node("generate_draft", make_generate_draft_node(llm_large, chunk_texts_by_id))
+    graph.add_node(
+        "verify_citations",
+        make_verify_citations_node(llm_large, chunk_texts_by_id=chunk_texts_by_id),
+    )
     graph.add_node(
         "compute_traceability_metrics",
         make_compute_traceability_metrics_node(embeddings, chunk_texts_by_id),
