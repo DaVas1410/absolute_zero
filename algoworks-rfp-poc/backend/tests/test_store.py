@@ -1,0 +1,45 @@
+"""Tests del vectorstore local (Chroma) sobre un corpus pequeño y
+embeddings deterministas (FakeEmbeddings), sin red ni modelos reales.
+"""
+
+from api.schemas import Chunk
+from rag.store import build_vectorstore, similarity_search
+from tests.fakes import FakeEmbeddings
+
+VOCABULARY = ["kafka", "retail", "manufactura", "logistica"]
+
+
+def _sample_chunks() -> list[Chunk]:
+    return [
+        Chunk(
+            chunk_id="chunk_kafka",
+            text="Arquitectura basada en Kafka para streaming de datos.",
+            source="doc_a.md",
+            section_type="capacidades_tecnicas",
+        ),
+        Chunk(
+            chunk_id="chunk_retail",
+            text="Proyecto de sincronización de inventario para retail.",
+            source="doc_b.md",
+            section_type="experiencia_previa",
+        ),
+    ]
+
+
+def test_similarity_search_returns_most_relevant_chunk_first():
+    vectorstore = build_vectorstore(_sample_chunks(), FakeEmbeddings(VOCABULARY))
+
+    results = similarity_search(vectorstore, "Necesitamos experiencia en retail", k=2)
+
+    assert results[0][0] == "chunk_retail"
+    assert len(results) == 2
+    assert all(isinstance(score, float) for _, _, score in results)
+
+
+def test_similarity_search_respects_k():
+    vectorstore = build_vectorstore(_sample_chunks(), FakeEmbeddings(VOCABULARY))
+
+    results = similarity_search(vectorstore, "kafka streaming", k=1)
+
+    assert len(results) == 1
+    assert results[0][0] == "chunk_kafka"
