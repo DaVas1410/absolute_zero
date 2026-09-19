@@ -1,0 +1,20 @@
+.td-results__metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.td-results__banner {
+  margin-bottom: var(--space-6);
+}
+
+.td-results__tabs {
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 1100px) {
+  .td-results__metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
