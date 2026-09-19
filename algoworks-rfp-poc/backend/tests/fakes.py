@@ -2,6 +2,8 @@
 grafo), para no depender de red ni de modelos reales en la suite.
 """
 
+from types import SimpleNamespace
+
 from langchain_core.embeddings import Embeddings
 
 
@@ -22,3 +24,36 @@ class FakeEmbeddings(Embeddings):
 
     def embed_query(self, text: str) -> list[float]:
         return self._vectorize(text)
+
+
+class ScriptedChatModel:
+    """LLM de prueba que devuelve respuestas predefinidas, en orden, tanto
+    para llamadas de texto plano (.invoke) como para salida estructurada
+    (.with_structured_output(...).invoke). No hace ninguna llamada real ni
+    reporta usage_metadata/response_metadata (las llamadas trackeadas
+    contra este doble siempre acumulan uso cero).
+    """
+
+    def __init__(self, plain_responses=None, structured_responses=None):
+        self._plain_responses = list(plain_responses or [])
+        self._structured_responses = list(structured_responses or [])
+
+    def invoke(self, prompt: str):
+        text = self._plain_responses.pop(0)
+        return SimpleNamespace(content=text)
+
+    def with_structured_output(self, schema, include_raw: bool = False):
+        outer = self
+
+        class _StructuredRunnable:
+            def invoke(self, prompt: str):
+                parsed = outer._structured_responses.pop(0)
+                if include_raw:
+                    return {
+                        "raw": SimpleNamespace(content="", usage_metadata=None, response_metadata={}),
+                        "parsed": parsed,
+                        "parsing_error": None,
+                    }
+                return parsed
+
+        return _StructuredRunnable()
