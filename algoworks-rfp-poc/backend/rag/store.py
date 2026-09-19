@@ -35,6 +35,22 @@ def build_vectorstore(
     )
 
 
+def add_chunks(vectorstore: Chroma, chunks: list[Chunk]) -> None:
+    documents = [
+        Document(
+            page_content=chunk.text,
+            metadata={
+                "chunk_id": chunk.chunk_id,
+                "source": chunk.source,
+                "section_type": chunk.section_type,
+            },
+        )
+        for chunk in chunks
+    ]
+    ids = [chunk.chunk_id for chunk in chunks]
+    vectorstore.add_documents(documents=documents, ids=ids)
+
+
 def similarity_search(vectorstore: Chroma, query: str, k: int) -> list[tuple[str, str, float]]:
     results = vectorstore.similarity_search_with_relevance_scores(query, k=k)
     return [

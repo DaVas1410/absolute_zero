@@ -3,7 +3,7 @@ embeddings deterministas (FakeEmbeddings), sin red ni modelos reales.
 """
 
 from api.schemas import Chunk
-from rag.store import build_vectorstore, similarity_search
+from rag.store import build_vectorstore, similarity_search, add_chunks
 from tests.fakes import FakeEmbeddings
 
 VOCABULARY = ["kafka", "retail", "manufactura", "logistica"]
@@ -56,3 +56,23 @@ def test_similarity_search_clamps_negative_relevance_scores():
     results = similarity_search(vectorstore, "logistica manufactura", k=2)
 
     assert all(0.0 <= score <= 1.0 for _, _, score in results)
+
+
+def test_add_chunks_makes_new_chunk_retrievable():
+    vectorstore = build_vectorstore(_sample_chunks(), FakeEmbeddings(VOCABULARY))
+
+    add_chunks(
+        vectorstore,
+        [
+            Chunk(
+                chunk_id="chunk_manufactura",
+                text="Nuevo proyecto de manufactura con Algoworks.",
+                source="doc_c.md",
+                section_type="experiencia_previa",
+            )
+        ],
+    )
+
+    results = similarity_search(vectorstore, "manufactura", k=1)
+
+    assert results[0][0] == "chunk_manufactura"
