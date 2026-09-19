@@ -79,6 +79,44 @@ if pipeline_result:
     drafts = pipeline_result["drafts"]
     verification = pipeline_result["verification"]
 
+    st.header("3. Propuesta")
+    st.caption(
+        "Texto completo generado por el sistema, con las citas [[chunk_id]] resaltadas. "
+        "El detalle de trazabilidad (chunks, veredicto, similitud) está más abajo, por requisito."
+    )
+
+    proposal_sections = []
+    for requirement in requirements:
+        draft = drafts.get(requirement["req_id"])
+        if not draft:
+            continue
+        section_label = requirement["section_target"].replace("_", " ").capitalize()
+        if proposal_sections and proposal_sections[-1][0] == section_label:
+            proposal_sections[-1][1].append(draft["text"])
+        else:
+            proposal_sections.append((section_label, [draft["text"]]))
+
+    if proposal_sections:
+        for section_label, draft_texts in proposal_sections:
+            st.markdown(f"#### {section_label}")
+            for draft_text in draft_texts:
+                st.markdown(highlight_citations(draft_text))
+
+        proposal_markdown = "\n\n".join(
+            f"## {section_label}\n\n" + "\n\n".join(draft_texts)
+            for section_label, draft_texts in proposal_sections
+        )
+        st.download_button(
+            "Descargar propuesta (.md)",
+            data=proposal_markdown,
+            file_name=f"{pipeline_result['rfp_id']}_propuesta.md",
+            mime="text/markdown",
+        )
+    else:
+        st.info("Todavía no hay borradores generados para esta RFP.")
+
+    st.header("4. Panel de explicabilidad (detalle por requisito)")
+
     for index, requirement in enumerate(requirements):
         req_id = requirement["req_id"]
         draft = drafts.get(req_id)
