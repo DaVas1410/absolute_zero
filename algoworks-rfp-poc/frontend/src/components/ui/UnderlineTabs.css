@@ -1,0 +1,26 @@
+.td-underline-tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.td-underline-tabs__item {
+  border: none;
+  background: transparent;
+  padding: var(--space-3) 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.td-underline-tabs__item.is-active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.td-underline-tabs__item:hover:not(.is-active) {
+  color: var(--ink);
+}

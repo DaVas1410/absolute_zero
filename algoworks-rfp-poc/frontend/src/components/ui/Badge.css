@@ -1,0 +1,42 @@
+.td-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.td-badge svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.td-badge--success {
+  background: var(--success-subtle);
+  border-color: var(--success-subtle-border);
+  color: var(--success);
+}
+
+.td-badge--caution {
+  background: var(--caution-subtle);
+  border-color: var(--caution-subtle-border);
+  color: var(--caution);
+}
+
+.td-badge--primary {
+  background: var(--primary-subtle);
+  border-color: var(--primary-subtle-border);
+  color: var(--primary-subtle-ink);
+}
+
+.td-badge--neutral {
+  background: var(--neutral-subtle);
+  border-color: var(--neutral-subtle-border);
+  color: var(--neutral-subtle-ink);
+}

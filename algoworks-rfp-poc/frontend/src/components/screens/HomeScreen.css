@@ -1,0 +1,59 @@
+.td-home {
+  max-width: 820px;
+}
+
+.td-home__hero {
+  margin-bottom: var(--space-12);
+}
+
+.td-home__hero-sub {
+  color: var(--ink-muted);
+  margin-top: var(--space-2);
+  max-width: 560px;
+}
+
+.td-home__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.td-home__field {
+  min-height: 160px;
+}
+
+.td-home__upload {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--surface-sunken);
+}
+
+.td-home__upload-hint {
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.td-home__upload-loaded {
+  color: var(--success);
+  margin: 0;
+}
+
+.td-home__examples-label {
+  color: var(--ink-subtle);
+  margin: 0 0 var(--space-2);
+}
+
+.td-home__actions {
+  display: flex;
+  justify-content: flex-end;
+}

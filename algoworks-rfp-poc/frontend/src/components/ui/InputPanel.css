@@ -1,0 +1,33 @@
+.td-input-panel {
+  position: relative;
+}
+
+.td-input-panel__textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 160px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.td-input-panel__textarea::placeholder {
+  color: var(--ink-placeholder);
+}
+
+.td-input-panel__textarea:hover {
+  border-color: var(--border-strong);
+}
+
+.td-input-panel__counter {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-2);
+  color: var(--ink-subtle);
+  background: var(--surface);
+  padding: 0 var(--space-1);
+}

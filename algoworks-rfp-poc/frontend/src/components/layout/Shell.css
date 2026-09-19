@@ -1,0 +1,11 @@
+.td-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.td-shell__content {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-10) var(--space-12);
+}

@@ -1,0 +1,73 @@
+/*
+ * Trace Desk design tokens.
+ * Source of truth: frontend/trace-desk-design-reference.md (now at
+ * ~/Downloads/trace-desk-design-reference.md — same content, relocated).
+ * Token names below match that document's token column exactly.
+ */
+
+:root {
+  /* Surfaces & structure */
+  --surface: #ffffff;
+  --surface-sunken: #f8fafc;
+  --surface-raised: #ffffff;
+  --surface-sidebar: #0f1b2d;
+  --surface-sidebar-hover: #16253d;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Text */
+  --ink: #0f172a;
+  --ink-muted: #475569;
+  --ink-subtle: #64748b;
+  --ink-on-sidebar: #e6ebf3;
+  --ink-on-sidebar-muted: #94a3b8;
+  --ink-placeholder: #94a3b8;
+
+  /* Brand & actions */
+  --brand: #dc2626;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-on: #ffffff;
+  --primary-subtle: #eff6ff;
+  --primary-subtle-border: #bfdbfe;
+  --primary-subtle-ink: #1d4ed8;
+
+  /* Status - the verification pair */
+  --success: #15803d;
+  --success-subtle: #f0fdf4;
+  --success-subtle-border: #bbf7d0;
+  --caution: #b45309;
+  --caution-subtle: #fffbeb;
+  --caution-subtle-border: #fde68a;
+  --neutral-subtle: #f1f5f9;
+  --neutral-subtle-ink: #334155;
+  --neutral-subtle-border: #e2e8f0;
+  --overlay-scrim: rgba(15, 23, 42, 0.36);
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Spacing (4px-rooted) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.16);
+}

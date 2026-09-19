@@ -1,0 +1,17 @@
+.td-metric-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.td-metric-tile__label {
+  color: var(--ink-subtle);
+  margin: 0 0 var(--space-1);
+}
+
+.td-metric-tile__value {
+  margin: 0;
+  color: var(--ink);
+}

@@ -1,0 +1,36 @@
+.td-callout {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  background: var(--primary-subtle);
+  border: 1px solid var(--primary-subtle-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.td-callout__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.td-callout__icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.75;
+}
+
+.td-callout__title {
+  color: var(--ink);
+  margin: 0 0 var(--space-1);
+}
+
+.td-callout__body {
+  color: var(--ink-muted);
+  margin: 0;
+}
