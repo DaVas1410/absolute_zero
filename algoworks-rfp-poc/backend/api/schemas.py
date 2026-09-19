@@ -8,6 +8,7 @@ la hora 0. Las adiciones de sub-project A son todas aditivas.
 """
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -18,6 +19,10 @@ class Chunk(BaseModel):
     source: str  # ej. "Propuesta_ClienteX_2023.md"
     section_type: str  # "experiencia_previa" | "capacidades_tecnicas" | "equipo" | ...
     metadata: dict = {}
+
+
+SECTION_TYPES: tuple[str, ...] = ("experiencia_previa", "capacidades_tecnicas", "equipo")
+SectionType = Literal["experiencia_previa", "capacidades_tecnicas", "equipo"]
 
 
 class Requirement(BaseModel):
@@ -96,3 +101,10 @@ class PipelineResult(BaseModel):
     trace_log: list[TraceEvent]
     metrics: PipelineMetrics
     reasoning_path_audit: ReasoningPathAudit
+
+
+class CorpusIngestResult(BaseModel):
+    source: str
+    section_type: str
+    chunks_added: list[Chunk]
+    chunk_count: int

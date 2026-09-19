@@ -3,16 +3,13 @@
 import re
 import time
 from datetime import datetime, timezone
-from typing import Literal
 
 from pydantic import BaseModel
 
-from api.schemas import Requirement, TraceEvent
+from api.schemas import Requirement, SectionType, TraceEvent
 from graph.llm_tracking import TokenAccumulator, invoke_structured_tracked
 from graph.prompts import load_prompt
 from graph.state import GraphState
-
-SectionTarget = Literal["experiencia_previa", "capacidades_tecnicas", "equipo"]
 
 _NUMBERED_LINE = re.compile(r"^\s*\d+[.)]\s*(.+)$")
 
@@ -20,7 +17,7 @@ _NUMBERED_LINE = re.compile(r"^\s*\d+[.)]\s*(.+)$")
 class _ExtractedRequirement(BaseModel):
     req_id: str
     text: str
-    section_target: SectionTarget
+    section_target: SectionType
 
 
 class _ExtractedRequirements(BaseModel):

@@ -143,3 +143,31 @@ def test_pipeline_result_round_trip_with_metrics_and_audit():
     assert result.drafts[requirement.req_id].cited_chunks == [chunk.chunk_id]
     assert result.metrics.requirements_supported == 1
     assert result.reasoning_path_audit.is_consistent is True
+
+
+def test_section_types_constant_matches_literal_values():
+    from api.schemas import SECTION_TYPES, SectionType
+
+    assert SECTION_TYPES == ("experiencia_previa", "capacidades_tecnicas", "equipo")
+    assert SectionType.__args__ == SECTION_TYPES
+
+
+def test_corpus_ingest_result_round_trip():
+    from api.schemas import CorpusIngestResult
+
+    chunk = Chunk(
+        chunk_id="doc_001",
+        text="Texto de prueba.",
+        source="doc.pdf",
+        section_type="experiencia_previa",
+    )
+
+    result = CorpusIngestResult(
+        source="doc.pdf",
+        section_type="experiencia_previa",
+        chunks_added=[chunk],
+        chunk_count=1,
+    )
+
+    assert result.chunk_count == 1
+    assert result.chunks_added[0].chunk_id == "doc_001"
