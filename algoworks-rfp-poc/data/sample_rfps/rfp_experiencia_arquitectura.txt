@@ -1,0 +1,2 @@
+1. El proveedor debe demostrar experiencia previa en proyectos de integración de datos de tamaño y complejidad similares.
+2. El proveedor debe describir su arquitectura para integración de datos en tiempo real.
