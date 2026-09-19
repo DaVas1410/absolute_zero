@@ -1,0 +1,44 @@
+[
+  {
+    "chunk_id": "chunk_001",
+    "text": "Para un cliente del sector manufactura, Algoworks lideró la integración de 6 sistemas ERP heredados con un data warehouse central, reduciendo el tiempo de conciliación de inventario de 5 días a 8 horas (una reducción del 93%) y procesando 2.3M de registros mensuales, en un proyecto de 4 meses.",
+    "source": "Propuesta_ClienteManufactura_2023.md",
+    "section_type": "experiencia_previa",
+    "metadata": {"anio": 2023}
+  },
+  {
+    "chunk_id": "chunk_002",
+    "text": "En 2022, Algoworks desarrolló una plataforma de sincronización de inventario en tiempo real para una cadena de retail de 40 tiendas, reduciendo las discrepancias de stock del 15% al 2% de las unidades (una reducción del 87%) en los primeros 3 meses de operación.",
+    "source": "Propuesta_ClienteRetail_2022.md",
+    "section_type": "experiencia_previa",
+    "metadata": {"anio": 2022}
+  },
+  {
+    "chunk_id": "chunk_003",
+    "text": "Algoworks migró un data lake on-premise de 8TB a una arquitectura cloud (Azure Data Lake) para un cliente de logística, sin downtime durante el corte de producción, y redujo el tiempo promedio de las consultas analíticas de 45 minutos a 4 minutos (una reducción del 91%).",
+    "source": "Propuesta_ClienteLogistica_2021.md",
+    "section_type": "experiencia_previa",
+    "metadata": {"anio": 2021}
+  },
+  {
+    "chunk_id": "chunk_004",
+    "text": "La arquitectura de referencia de Algoworks para integración de datos en tiempo real usa Apache Kafka como bus de eventos y Spark Structured Streaming para el procesamiento, con checkpoints para garantizar entrega exactly-once, soportando cargas de hasta 50,000 eventos por segundo en producción.",
+    "source": "Capacidades_Tecnicas_Algoworks.md",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "chunk_005",
+    "text": "El equipo de datos de Algoworks incluye 3 ingenieros certificados en Confluent Kafka y 2 certificados en Databricks, con un promedio de 5 años de experiencia en plataformas de streaming, y ha completado más de 30 despliegues de producción sin incidentes críticos.",
+    "source": "Equipo_Algoworks.md",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "chunk_006",
+    "text": "Algoworks es Socio Avanzado de AWS y ha entregado más de 120 proyectos de integración de datos desde 2015 para clientes en manufactura, retail, logística y servicios financieros, cubriendo el ciclo completo desde el diagnóstico y la arquitectura hasta la implementación y el soporte post-lanzamiento.",
+    "source": "Capacidades_Tecnicas_Algoworks.md",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  }
+]

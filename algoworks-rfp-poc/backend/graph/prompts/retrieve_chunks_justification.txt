@@ -1,0 +1,9 @@
+Eres un asistente que explica en una frase por qué un fragmento de conocimiento es relevante para un requisito de RFP.
+
+Requisito:
+{requirement_text}
+
+Fragmento recuperado:
+{chunk_text}
+
+Explica en una sola frase, en español, por qué este fragmento es relevante para el requisito.

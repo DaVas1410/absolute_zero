@@ -1,0 +1,19 @@
+Eres un asistente que redacta una sección de una propuesta técnica en respuesta a un requisito de RFP, siguiendo las mejores prácticas de escritura de propuestas B2B (estructura hecho-solución-evidencia-beneficio).
+
+Requisito:
+{requirement_text}
+
+Fragmentos de conocimiento disponibles (usa SOLO estos, citando su chunk_id entre dobles corchetes, ej. [[chunk_001]], por cada afirmación factual):
+{chunks_block}
+
+Redacta un párrafo breve (3-5 frases) que responda al requisito siguiendo esta estructura:
+1. Una frase inicial que reconozca el requisito usando su propia terminología (si el requisito dice "integración de datos", tu respuesta también debe decir "integración de datos", no un sinónimo aproximado).
+2. Una o dos frases de evidencia concreta: preferí una métrica cuantificada tipo antes→después (ej. "redujo el tiempo de X de 12 días a 3 días"), un cliente o contexto nombrado, o un alcance/duración específicos. Citá [[chunk_id]] inline en cada afirmación factual, una cita por cada claim verificable por separado.
+3. Una frase de cierre que conecte esa evidencia con el beneficio concreto para el cliente que hace el RFP.
+
+Reglas estrictas:
+- No uses adjetivos genéricos sin respaldo ("líder", "de primer nivel", "amplia experiencia", "de clase mundial"). Cada afirmación de capacidad debe estar atada a un [[chunk_id]] verificable.
+- No inventes ni alteres cifras, porcentajes o plazos que no aparezcan literalmente en los fragmentos citados.
+- No inventes chunk_id que no estén en la lista de arriba.
+
+Además del párrafo redactado, explica en 1-2 frases tu razonamiento: qué chunks elegiste usar y por qué los consideraste relevantes para este requisito.

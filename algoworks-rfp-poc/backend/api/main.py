@@ -4,24 +4,23 @@ Contrato de endpoints: ver CLAUDE.md, sección 5.
 """
 
 import logging
-from datetime import datetime, timezone
+from functools import lru_cache
 from http import HTTPStatus
+from typing import Callable
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.schemas import (
-    DraftSection,
-    PipelineResult,
-    Requirement,
-    RetrievedChunk,
-    TraceEvent,
-    VerificationResult,
-)
+from api.schemas import PipelineResult, TraceEvent
+from graph.graph import run_pipeline
+from graph.llm import get_chat_llm
+from rag.corpus import load_dummy_chunks
+from rag.embed import SentenceTransformerEmbeddings
+from rag.store import build_vectorstore
 
 logger = logging.getLogger("algoworks_rfp_api")
 
@@ -76,180 +75,40 @@ class FeedbackRequest(BaseModel):
     accepted: bool
 
 
-# Guarda en memoria el último PipelineResult mockeado por rfp_id, para que
-# GET /rfp/{rfp_id}/trace pueda devolver su trace_log.
+# Guarda en memoria el último PipelineResult real (no mockeado) por rfp_id,
+# para que GET /rfp/{rfp_id}/trace pueda devolver su trace_log.
 _pipeline_results: dict[str, PipelineResult] = {}
 
 
-def _build_mock_pipeline_result(rfp_id: str) -> PipelineResult:
-    # TODO: reemplazar por invocación real del grafo LangGraph
-    # (extract_requirements -> retrieve_chunks -> generate_draft -> verify_citations).
-    # Todo lo que sigue es un PipelineResult de EJEMPLO, hardcodeado, solo para
-    # que frontend pueda construir el panel de explicabilidad desde ya.
+PipelineRunner = Callable[[str, str], PipelineResult]
 
-    requirements = [
-        Requirement(
-            req_id="req_001",
-            text=(
-                "El proveedor debe demostrar experiencia previa en proyectos de "
-                "integración de datos de tamaño y complejidad similares."
-            ),
-            section_target="experiencia_previa",
-        ),
-        Requirement(
-            req_id="req_002",
-            text=(
-                "El proveedor debe describir las capacidades técnicas y la "
-                "arquitectura propuesta para la integración de datos en tiempo real."
-            ),
-            section_target="capacidades_tecnicas",
-        ),
-    ]
 
-    retrieved = {
-        "req_001": [
-            RetrievedChunk(
-                chunk_id="chunk_001",
-                score=0.89,
-                justification=(
-                    "El chunk describe un proyecto de integración de datos de "
-                    "alcance comparable, incluyendo volumen de datos y timeline."
-                ),
-            ),
-            RetrievedChunk(
-                chunk_id="chunk_002",
-                score=0.76,
-                justification=(
-                    "Menciona experiencia previa con el mismo tipo de cliente "
-                    "(sector retail), relevante para el requisito de experiencia."
-                ),
-            ),
-            RetrievedChunk(
-                chunk_id="chunk_003",
-                score=0.61,
-                justification=(
-                    "Relacionado tangencialmente: describe un proyecto de "
-                    "migración de datos, no de integración, pero comparte stack."
-                ),
-            ),
-        ],
-        "req_002": [
-            RetrievedChunk(
-                chunk_id="chunk_004",
-                score=0.83,
-                justification=(
-                    "Describe la arquitectura de referencia de Algoworks para "
-                    "pipelines de datos en tiempo real (Kafka + Spark Streaming)."
-                ),
-            ),
-            RetrievedChunk(
-                chunk_id="chunk_005",
-                score=0.70,
-                justification=(
-                    "Detalla las certificaciones técnicas del equipo en "
-                    "plataformas de streaming de datos."
-                ),
-            ),
-        ],
-    }
+@lru_cache(maxsize=1)
+def _get_corpus_resources():
+    chunks = load_dummy_chunks()
+    embeddings = SentenceTransformerEmbeddings()
+    vectorstore = build_vectorstore(chunks, embeddings)
+    chunk_texts_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
+    return vectorstore, embeddings, chunk_texts_by_id
 
-    drafts = {
-        "req_001": DraftSection(
-            req_id="req_001",
-            text=(
-                "Algoworks cuenta con experiencia comprobada en proyectos de "
-                "integración de datos de alcance similar [[chunk_001]], incluyendo "
-                "trabajo previo con clientes del sector retail [[chunk_002]]."
-            ),
-            cited_chunks=["chunk_001", "chunk_002"],
-        ),
-        "req_002": DraftSection(
-            req_id="req_002",
-            text=(
-                "Proponemos una arquitectura basada en Kafka y Spark Streaming "
-                "para la integración de datos en tiempo real [[chunk_004]], con "
-                "una latencia end-to-end de 50ms garantizada por el SLA del "
-                "proveedor cloud [[chunk_004]]."
-            ),
-            cited_chunks=["chunk_004"],
-        ),
-    }
 
-    verification = {
-        "req_001": VerificationResult(
-            req_id="req_001",
-            supported=True,
-            issues=[],
-            confidence=0.91,
-        ),
-        "req_002": VerificationResult(
-            req_id="req_002",
-            supported=False,
-            issues=[
-                "chunk_004 describe la arquitectura de streaming pero no "
-                "menciona ningún SLA de latencia de 50ms; esa afirmación "
-                "parece inventada por el generador.",
-            ],
-            confidence=0.38,
-        ),
-    }
+@app.on_event("startup")
+def _warm_up_corpus_resources() -> None:
+    # Precalienta embeddings + vectorstore en el arranque (en vez de en el
+    # primer POST /rfp/process) para no pagar el costo (descarga del modelo
+    # de embeddings, indexado de Chroma) en la primera request de una demo.
+    _get_corpus_resources()
 
-    now = datetime.now(timezone.utc)
-    trace_log = [
-        TraceEvent(
-            node="extract_requirements",
-            timestamp=now,
-            input_summary=f"rfp_id={rfp_id}, texto de RFP recibido",
-            output_summary=f"{len(requirements)} requisitos extraídos",
-            reasoning=(
-                "Se identificaron 2 secciones explícitas en el RFP (experiencia "
-                "previa y capacidades técnicas) mediante structured output; no "
-                "fue necesario el fallback de split por líneas numeradas."
-            ),
-        ),
-        TraceEvent(
-            node="retrieve_chunks",
-            timestamp=now,
-            input_summary="2 requisitos, corpus de 5 chunks disponibles",
-            output_summary="3 chunks para req_001, 2 chunks para req_002",
-            reasoning=(
-                "Se recuperaron los chunks con mayor similitud coseno por "
-                "requisito (umbral 0.6) y se generó una justificación en "
-                "lenguaje natural para cada uno."
-            ),
-        ),
-        TraceEvent(
-            node="generate_draft",
-            timestamp=now,
-            input_summary="2 requisitos + chunks recuperados",
-            output_summary="2 DraftSection generados, todos con citas [[chunk_id]] válidas",
-            reasoning=(
-                "El post-procesamiento verificó que todos los chunk_id citados "
-                "existen entre los chunks recuperados; no se detectaron citas "
-                "alucinadas en esta corrida."
-            ),
-        ),
-        TraceEvent(
-            node="verify_citations",
-            timestamp=now,
-            input_summary="2 DraftSection citados",
-            output_summary="req_001 soportado, req_002 no soportado (1 reintento agotado)",
-            reasoning=(
-                "req_002 afirma un SLA de latencia de 50ms que chunk_004 no "
-                "respalda; se disparó un reintento a generate_draft que no "
-                "corrigió el problema, por lo que se marca para revisión humana."
-            ),
-        ),
-    ]
 
-    return PipelineResult(
-        rfp_id=rfp_id,
-        requirements=requirements,
-        retrieved=retrieved,
-        drafts=drafts,
-        verification=verification,
-        trace_log=trace_log,
-    )
+def _default_pipeline_runner(rfp_id: str, rfp_text: str) -> PipelineResult:
+    llm_small = get_chat_llm("small")
+    llm_large = get_chat_llm("large")
+    vectorstore, embeddings, chunk_texts_by_id = _get_corpus_resources()
+    return run_pipeline(rfp_id, rfp_text, llm_small, llm_large, vectorstore, embeddings, chunk_texts_by_id)
+
+
+def get_pipeline_runner() -> PipelineRunner:
+    return _default_pipeline_runner
 
 
 @app.get("/health")
@@ -258,8 +117,11 @@ def health() -> dict[str, str]:
 
 
 @app.post("/rfp/process", response_model=PipelineResult)
-def process_rfp(payload: RFPProcessRequest) -> PipelineResult:
-    result = _build_mock_pipeline_result(payload.rfp_id)
+def process_rfp(
+    payload: RFPProcessRequest,
+    pipeline_runner: PipelineRunner = Depends(get_pipeline_runner),
+) -> PipelineResult:
+    result = pipeline_runner(payload.rfp_id, payload.rfp_text)
     _pipeline_results[payload.rfp_id] = result
     return result
 
