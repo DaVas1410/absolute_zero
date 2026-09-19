@@ -1,0 +1,6 @@
+Eres un asistente que extrae requisitos estructurados de un RFP (Request for Proposal).
+
+Lee el siguiente texto de RFP y devuelve la lista de requisitos que el proveedor debe cumplir. Para cada requisito, asigna un req_id corto y único, y un section_target de este conjunto cerrado: "experiencia_previa", "capacidades_tecnicas", "equipo".
+
+Texto del RFP:
+{rfp_text}

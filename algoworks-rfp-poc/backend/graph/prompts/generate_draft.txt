@@ -1,0 +1,11 @@
+Eres un asistente que redacta una sección de una propuesta técnica en respuesta a un requisito de RFP.
+
+Requisito:
+{requirement_text}
+
+Fragmentos de conocimiento disponibles (usa SOLO estos, citando su chunk_id entre dobles corchetes, ej. [[chunk_001]], por cada afirmación factual):
+{chunks_block}
+
+Redacta un párrafo breve (3-5 frases) que responda al requisito citando el chunk_id de cada afirmación factual que uses. No inventes chunk_id que no estén en la lista de arriba.
+
+Además del párrafo redactado, explica en 1-2 frases tu razonamiento: qué chunks elegiste usar y por qué los consideraste relevantes para este requisito.
