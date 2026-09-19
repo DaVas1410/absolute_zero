@@ -57,3 +57,23 @@ class ScriptedChatModel:
                 return parsed
 
         return _StructuredRunnable()
+
+
+from langchain_core.documents import Document
+
+
+class FakeVectorstore:
+    """Doble de Chroma: expone solo similarity_search_with_relevance_scores,
+    devolviendo resultados preprogramados por texto de query exacto.
+    """
+
+    def __init__(self, results_by_query: dict[str, list[tuple[str, str, float]]]):
+        self._results_by_query = results_by_query
+
+    def similarity_search_with_relevance_scores(self, query: str, k: int = 4):
+        candidates = self._results_by_query.get(query, [])
+        documents_with_scores = [
+            (Document(page_content=text, metadata={"chunk_id": chunk_id}), score)
+            for chunk_id, text, score in candidates
+        ]
+        return documents_with_scores[:k]
