@@ -6,6 +6,11 @@ Borrador:
 Fragmentos citados:
 {chunks_block}
 
-Indica si el borrador está completamente respaldado por los fragmentos citados (supported: true/false), lista los problemas encontrados (issues, vacío si no hay) y da un nivel de confianza entre 0 y 1 (confidence).
+Revisá el borrador afirmación por afirmación contra los fragmentos citados. Prestá atención especial a:
+- Cifras, porcentajes, plazos y montos: deben coincidir EXACTAMENTE con lo que dice el fragmento fuente. Una cifra inventada, redondeada de forma engañosa, o alterada (aunque sea plausible) cuenta como no respaldada.
+- Nombres de clientes, sectores o proyectos: deben corresponder al fragmento citado, no a otro.
+- Afirmaciones de capacidad genéricas ("líder en...", "amplia experiencia") que no estén ancladas a un hecho concreto del fragmento.
+
+Indica si el borrador está completamente respaldado por los fragmentos citados (supported: true/false), lista los problemas encontrados (issues, vacío si no hay, siendo específico sobre qué afirmación falla y por qué) y da un nivel de confianza entre 0 y 1 (confidence).
 
 Explica también en 1-2 frases tu razonamiento: qué parte del borrador sí (o no) está respaldada por los fragmentos, y por qué llegaste a ese veredicto.
