@@ -1,0 +1,11 @@
+id,capacidad,descripcion,tecnologias,nivel_confianza,evidencia
+CAP-001,Data Engineering,Construcción de pipelines ETL/ELT y modelos analíticos,Python; SQL; dbt,Alta,CASE-001;CASE-003
+CAP-002,Cloud Modernization,Diseño de arquitecturas cloud híbridas y migración incremental,AWS; Azure; Terraform,Media,CASE-001
+CAP-003,Machine Learning,Modelos predictivos y clasificación,Python; scikit-learn; MLflow,Alta,CASE-002
+CAP-004,Generative AI,"RAG, asistentes y extracción de información",Python; vector DB; LLM APIs,Alta,CASE-004
+CAP-005,API Integration,Integración mediante APIs REST y eventos,Python; Java; Kafka,Alta,CASE-001;CASE-003
+CAP-006,DevSecOps,"CI/CD, pruebas automatizadas y observabilidad",GitHub Actions; Docker; Kubernetes,Media,CASE-001
+CAP-007,UX/UI,Prototipado y diseño de interfaces,Figma,Media,CASE-002
+CAP-008,IoT,Integración de sensores y edge computing,Python; MQTT,Baja,CASE-003
+CAP-009,Legacy Mainframe,Modernización de sistemas mainframe,COBOL; Java,Baja,No hay evidencia reciente; validar
+CAP-010,Data Governance,"Catálogo, calidad, linaje y gobierno de datos",SQL; Data Catalog,Media,CASE-001

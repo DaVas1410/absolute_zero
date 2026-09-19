@@ -1,0 +1,50 @@
+[
+  {
+    "id": "KB-001",
+    "tipo": "capacidad",
+    "tema": "data engineering",
+    "texto": "Algoworks simulado tiene capacidad de construir pipelines ETL/ELT, modelos analíticos y controles de calidad.",
+    "fuente": "03_Catalogo_Capacidades.csv",
+    "confianza": "alta"
+  },
+  {
+    "id": "KB-002",
+    "tipo": "caso",
+    "tema": "finanzas",
+    "texto": "CASE-004 documenta un proyecto ficticio para Aurora Bank con 9 fuentes integradas y 22 controles de calidad.",
+    "fuente": "07_Caso_004_Aurora_Bank.md",
+    "confianza": "alta"
+  },
+  {
+    "id": "KB-003",
+    "tipo": "caso",
+    "tema": "retail",
+    "texto": "CASE-001 documenta integración de 18 fuentes y 27 reglas de calidad.",
+    "fuente": "04_Caso_001_Nimbus_Retail.md",
+    "confianza": "alta"
+  },
+  {
+    "id": "KB-004",
+    "tipo": "metodologia",
+    "tema": "piloto",
+    "texto": "La metodología simulada contempla descubrimiento, arquitectura, piloto y escalamiento.",
+    "fuente": "08_Metodologia_Entrega.md",
+    "confianza": "media"
+  },
+  {
+    "id": "KB-005",
+    "tipo": "seguridad",
+    "tema": "certificaciones",
+    "texto": "Las prácticas simuladas no acreditan certificaciones ISO, SOC, PCI-DSS u otras.",
+    "fuente": "11_Politicas_Simuladas.md",
+    "confianza": "alta"
+  },
+  {
+    "id": "KB-006",
+    "tipo": "experto",
+    "tema": "legacy",
+    "texto": "Andrés Ruiz tiene experiencia declarada en COBOL, Java y APIs, pero no existe un caso financiero reciente asociado en el dataset.",
+    "fuente": "09_Equipo_Expertos.csv",
+    "confianza": "media"
+  }
+]

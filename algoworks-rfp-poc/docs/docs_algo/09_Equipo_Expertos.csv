@@ -1,0 +1,7 @@
+id,nombre,rol,experiencia,tecnologias,sectores,evidencia
+EXP-001,María Torres,Data Engineering Lead,9 años,Python; SQL; dbt; AWS,Finanzas; retail,CASE-001;CASE-004
+EXP-002,Diego Molina,Cloud Architect,11 años,AWS; Azure; Terraform; Kubernetes,Retail; logística,CASE-001;CASE-003
+EXP-003,Sofía Herrera,ML Engineer,6 años,Python; scikit-learn; MLflow,Salud; retail,CASE-002
+EXP-004,Carlos Vega,Integration Architect,8 años,Java; Python; Kafka; REST,Logística; finanzas,CASE-003;CASE-004
+EXP-005,Lucía Paredes,UX Researcher,5 años,Figma; entrevistas; prototipado,Salud; educación,CASE-002
+EXP-006,Andrés Ruiz,Legacy Specialist,12 años,COBOL; Java; APIs,No hay caso financiero reciente asociado,Requiere validación

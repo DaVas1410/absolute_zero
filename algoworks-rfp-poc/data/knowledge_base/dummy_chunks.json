@@ -4,21 +4,27 @@
     "text": "Para un cliente del sector manufactura, Algoworks lideró la integración de 6 sistemas ERP heredados con un data warehouse central, reduciendo el tiempo de conciliación de inventario de 5 días a 8 horas (una reducción del 93%) y procesando 2.3M de registros mensuales, en un proyecto de 4 meses.",
     "source": "Propuesta_ClienteManufactura_2023.md",
     "section_type": "experiencia_previa",
-    "metadata": {"anio": 2023}
+    "metadata": {
+      "anio": 2023
+    }
   },
   {
     "chunk_id": "chunk_002",
     "text": "En 2022, Algoworks desarrolló una plataforma de sincronización de inventario en tiempo real para una cadena de retail de 40 tiendas, reduciendo las discrepancias de stock del 15% al 2% de las unidades (una reducción del 87%) en los primeros 3 meses de operación.",
     "source": "Propuesta_ClienteRetail_2022.md",
     "section_type": "experiencia_previa",
-    "metadata": {"anio": 2022}
+    "metadata": {
+      "anio": 2022
+    }
   },
   {
     "chunk_id": "chunk_003",
     "text": "Algoworks migró un data lake on-premise de 8TB a una arquitectura cloud (Azure Data Lake) para un cliente de logística, sin downtime durante el corte de producción, y redujo el tiempo promedio de las consultas analíticas de 45 minutos a 4 minutos (una reducción del 91%).",
     "source": "Propuesta_ClienteLogistica_2021.md",
     "section_type": "experiencia_previa",
-    "metadata": {"anio": 2021}
+    "metadata": {
+      "anio": 2021
+    }
   },
   {
     "chunk_id": "chunk_004",
@@ -40,5 +46,424 @@
     "source": "Capacidades_Tecnicas_Algoworks.md",
     "section_type": "capacidades_tecnicas",
     "metadata": {}
+  },
+  {
+    "chunk_id": "perfil_algoworks_simulado_001",
+    "text": "Perfil de proveedor - Algoworks (simulado)\nResumen\nAlgoworks Simulated Solutions es una empresa ficticia de servicios tecnologicos especializada en ingenieria\nde software, modernizacion cloud, datos, analitica e inteligencia artificial. Documento ficticio creado para el\nHackathon, no representa informacion corporativa real.\nCapacidades principales\nIngenieria de software y arquitectura de soluciones. Modernizacion de aplicaciones. Plataformas de datos y\nanalitica. Inteligencia artificial y machine learning. Integracion de sistemas mediante APIs. Automatizacion de\nprocesos. DevSecOps y observabilidad. Diseno UX/UI.\nSectores con experiencia simulada",
+    "source": "Perfil_Algoworks_Simulado.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "perfil_algoworks_simulado_002",
+    "text": "procesos. DevSecOps y observabilidad. Diseno UX/UI.\nSectores con experiencia simulada\nServicios financieros, retail, salud, logistica y educacion.\nModelo de trabajo\nLa organizacion utiliza equipos multidisciplinarios y un enfoque incremental: 1) Descubrimiento y definicion,\n2) Arquitectura y diseno, 3) MVP / piloto, 4) Industrializacion, 5) Operacion y mejora continua.\nRestricciones del dataset\nNo se incluyen contratos, documentos legales ni propuestas comerciales reales. Cualquier dato comercial,\ncertificacion o compromiso no expresamente documentado debe considerarse pendiente de validacion.",
+    "source": "Perfil_Algoworks_Simulado.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "metodologia_entrega_001",
+    "text": "Metodologia de entrega - Simulada\nFase 1: Descubrimiento (2 semanas de referencia)\nIdentificar stakeholders, inventariar fuentes de datos, definir requisitos funcionales y no funcionales,\nidentificar riesgos y dependencias.\nFase 2: Arquitectura y diseno (3 semanas de referencia)\nArquitectura objetivo, modelo de datos, integraciones, seguridad y observabilidad, plan de migracion.\nFase 3: Piloto (6-8 semanas de referencia)\nImplementacion de un flujo prioritario, pruebas, validacion con usuarios.\nFase 4: Escalamiento (duracion por definir segun alcance)\nIndustrializacion, automatizacion, transferencia de conocimiento, operacion.\nImportante",
+    "source": "Metodologia_Entrega.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "metodologia_entrega_002",
+    "text": "Industrializacion, automatizacion, transferencia de conocimiento, operacion.\nImportante\nLos tiempos son referencias simuladas. No deben presentarse como compromisos contractuales.",
+    "source": "Metodologia_Entrega.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "politicas_simuladas_001",
+    "text": "Practicas de seguridad y gobierno - Simuladas\nControles disponibles\nCifrado en transito mediante TLS. Cifrado en reposo cuando la plataforma lo soporta. Gestion de secretos\nmediante un gestor de secretos. Control de acceso basado en roles. Registro de auditoria para operaciones\ncriticas. Revision de dependencias de software. Escaneo automatizado de vulnerabilidades en CI/CD.\nGobierno de datos\nDefinicion de propietarios de datos. Catalogo de fuentes. Reglas de calidad. Registro de linaje cuando\ntecnicamente sea posible.\nAdvertencia\nEste documento describe practicas simuladas. No afirma certificaciones ISO, SOC, PCI-DSS u otras. Si un",
+    "source": "Politicas_Simuladas.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "politicas_simuladas_002",
+    "text": "Advertencia\nEste documento describe practicas simuladas. No afirma certificaciones ISO, SOC, PCI-DSS u otras. Si un\nRFP exige una certificacion concreta, la respuesta debe marcarla como 'requiere validacion'.",
+    "source": "Politicas_Simuladas.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "conversaciones_especialistas_001",
+    "text": "Conversaciones con especialistas - Simuladas\nEspecialista de datos\nPregunta: Tenemos experiencia integrando muchas fuentes? Respuesta: Si. En el caso Nimbus se\nintegraron 18 fuentes. Aurora Bank tuvo 9 fuentes. Para un nuevo cliente habria que revisar cuantas fuentes\nexisten realmente antes de comprometer una arquitectura.\nEspecialista cloud\nPregunta: Podemos trabajar con Azure? Respuesta: El catalogo incluye Azure y el equipo tiene un perfil de\narquitectura cloud. Sin embargo, el dataset no contiene un proyecto donde Azure sea el proveedor principal\ny financiero al mismo tiempo. Conviene expresarlo con cautela.\nEspecialista de seguridad",
+    "source": "Conversaciones_Especialistas.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "conversaciones_especialistas_002",
+    "text": "y financiero al mismo tiempo. Conviene expresarlo con cautela.\nEspecialista de seguridad\nPregunta: Podemos afirmar que tenemos certificacion PCI-DSS? Respuesta: No. No hay evidencia en el\nmaterial simulado. Debe marcarse como requisito pendiente de validacion.\nEspecialista de delivery\nPregunta: Cuanto tardaria un piloto? Respuesta: La metodologia usa como referencia 6-8 semanas para un\npiloto. Es una referencia, no un compromiso.\nEspecialista comercial\nPregunta: Debemos incluir todos nuestros casos? Respuesta: No. Lo recomendable es seleccionar\nevidencias que respondan directamente a los requisitos del cliente y explicar la relacion.",
+    "source": "Conversaciones_Especialistas.pdf",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "distractor_educaplus_001",
+    "text": "Documento historico - Programa de educacion digital (EducaPlus,\n2023)\nResumen\nCliente: EducaPlus (ficticio). Ano: 2023. Este proyecto implemento una plataforma de contenidos educativos\ncon autenticacion, analitica de usuarios y aplicacion movil.\nResultado\n25.000 usuarios registrados. Aplicacion movil desarrollada en React Native. Dashboard de participacion.\nNota\nEl proyecto es realista como referencia tecnologica, pero su pertinencia para un RFP de servicios financieros\nes limitada. No contiene evidencia de plataforma financiera ni de integracion de datos a escala.",
+    "source": "Distractor_EducaPlus.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_aurorabank_2023_001",
+    "text": "Propuesta Algoworks - Aurora Bank: Plataforma de Datos y Gobierno\n(2021-2023)\nEntendimiento del problema\nAurora Bank (servicios financieros). Aurora Bank (cliente ficticio, servicios financieros) necesitaba consolidar\ninformacion de clientes proveniente de multiples sistemas y generar indicadores de riesgo confiables. La\ninformacion estaba fragmentada entre plataformas transaccionales y no existia un catalogo unico de datos ni\ncontroles de calidad sistematicos.\nSolucion propuesta\nAurora Bank (servicios financieros). Algoworks construyo un data lakehouse con procesos de ingesta\nestandarizados, controles de calidad automatizados, un catalogo de datos con propietarios definidos y APIs",
+    "source": "Propuesta_AuroraBank_2023.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_aurorabank_2023_002",
+    "text": "estandarizados, controles de calidad automatizados, un catalogo de datos con propietarios definidos y APIs\nde consulta para las areas de riesgo y negocio. El diseno prioriza trazabilidad de linaje y gobierno sobre\nvelocidad de entrega.\nArquitectura\nAurora Bank (servicios financieros). Stack: Python, SQL, Azure, PostgreSQL, APIs REST. Se integraron 9\nfuentes de datos bajo un modelo de ingesta incremental, con 22 controles de calidad automatizados\naplicados antes de la publicacion de cada dataset en el catalogo.\nEquipo asignado\nAurora Bank (servicios financieros). Maria Torres (Data Engineering Lead, 9 anos de experiencia, sectores",
+    "source": "Propuesta_AuroraBank_2023.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_aurorabank_2023_003",
+    "text": "Aurora Bank (servicios financieros). Maria Torres (Data Engineering Lead, 9 anos de experiencia, sectores\nfinanzas y retail) lidero el diseno del pipeline de ingesta y calidad. Carlos Vega (Integration Architect, 8 anos,\nsectores logistica y finanzas) diseno las APIs de integracion con los sistemas core.\nEnfoque de implementacion\nAurora Bank (servicios financieros). Se siguio la metodologia estandar de Algoworks: descubrimiento (2\nsemanas de referencia), arquitectura y diseno (3 semanas), piloto acotado a un dominio de datos (6-8\nsemanas) y escalamiento progresivo al resto de fuentes.\nResultados",
+    "source": "Propuesta_AuroraBank_2023.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_aurorabank_2023_004",
+    "text": "semanas) y escalamiento progresivo al resto de fuentes.\nResultados\nAurora Bank (servicios financieros). 9 fuentes integradas, 22 controles de calidad automatizados, y una\nreduccion del 60% en el tiempo de consolidacion mensual de datos de riesgo respecto al proceso manual\nprevio.\nLimitaciones y elementos que requieren validacion\nAurora Bank (servicios financieros). Este documento no acredita certificaciones regulatorias especificas\n(ISO, SOC, PCI-DSS) ni garantiza experiencia previa con un core bancario identico al de un cliente futuro.\nCualquier requisito de certificacion especifica debe marcarse como pendiente de validacion en una\npropuesta nueva.",
+    "source": "Propuesta_AuroraBank_2023.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_nimbusretail_2025_001",
+    "text": "Propuesta Algoworks - Nimbus Retail Group: Plataforma de Datos\nELT (2024-2025)\nEntendimiento del problema\nNimbus Retail Group (retail). Nimbus Retail Group (cliente ficticio, retail) tenia datos de ventas, inventario y\nclientes distribuidos en cuatro sistemas independientes. Los reportes semanales de negocio requerian\nconsolidacion manual, lo que introducia retrasos y errores.\nSolucion propuesta\nNimbus Retail Group (retail). Se implemento una arquitectura de datos basada en pipelines ELT, un modelo\nanalitico centralizado, controles de calidad automatizados y APIs para exponer indicadores a las\naplicaciones internas de negocio.\nArquitectura",
+    "source": "Propuesta_NimbusRetail_2025.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_nimbusretail_2025_002",
+    "text": "aplicaciones internas de negocio.\nArquitectura\nNimbus Retail Group (retail). Stack: Python, SQL, dbt, AWS, Terraform, PostgreSQL. Se integraron 18\nfuentes de datos heterogeneas bajo un unico modelo analitico, con 27 reglas de calidad automatizadas\nejecutadas en cada carga.\nEquipo asignado\nNimbus Retail Group (retail). Maria Torres (Data Engineering Lead, 9 anos, finanzas y retail) lidero la\nconstruccion de los pipelines ELT y el modelo analitico. Diego Molina (Cloud Architect, 11 anos, retail y\nlogistica) diseno la infraestructura AWS con Terraform.\nEnfoque de implementacion\nNimbus Retail Group (retail). Descubrimiento (2 semanas), arquitectura y diseno (3 semanas), piloto sobre",
+    "source": "Propuesta_NimbusRetail_2025.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_nimbusretail_2025_003",
+    "text": "Nimbus Retail Group (retail). Descubrimiento (2 semanas), arquitectura y diseno (3 semanas), piloto sobre\nun subconjunto de tiendas (6-8 semanas) y escalamiento al resto de la operacion.\nResultados\nNimbus Retail Group (retail). Reduccion del tiempo de preparacion de reportes de 3 dias a 5 horas. 18\nfuentes integradas. 27 reglas de calidad automatizadas.\nLimitaciones y elementos que requieren validacion\nNimbus Retail Group (retail). La experiencia documentada corresponde al sector retail; no incluye integracion\ncon sistemas regulatorios ni migracion de un core bancario. No debe presentarse como evidencia directa de\nexperiencia en servicios financieros.",
+    "source": "Propuesta_NimbusRetail_2025.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_orionlogistics_2024_001",
+    "text": "Propuesta Algoworks - Orion Logistics: Integracion de Datos y\nEventos (2022-2024)\nEntendimiento del problema\nOrion Logistics (logistica). Orion Logistics (cliente ficticio, logistica) tenia informacion de vehiculos, rutas y\nentregas proveniente de sistemas heterogeneos, sin un mecanismo de conciliacion automatizado entre ellos.\nSolucion propuesta\nOrion Logistics (logistica). Algoworks implemento integracion mediante APIs y eventos, almacenamiento\nanalitico centralizado y un modulo experimental de sensores IoT para monitoreo de flota en tiempo casi real.\nArquitectura\nOrion Logistics (logistica). Stack: Python, Java, Kafka, PostgreSQL, MQTT. Se integraron 12 sistemas",
+    "source": "Propuesta_OrionLogistics_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_orionlogistics_2024_002",
+    "text": "Arquitectura\nOrion Logistics (logistica). Stack: Python, Java, Kafka, PostgreSQL, MQTT. Se integraron 12 sistemas\nmediante un bus de eventos basado en Kafka, con un piloto de monitoreo de 1.200 dispositivos IoT.\nEquipo asignado\nOrion Logistics (logistica). Carlos Vega (Integration Architect, 8 anos, logistica y finanzas) lidero el diseno de\nla integracion por eventos. Diego Molina (Cloud Architect, 11 anos, retail y logistica) diseno el\nalmacenamiento analitico.\nEnfoque de implementacion\nOrion Logistics (logistica). Descubrimiento (2 semanas), arquitectura y diseno (3 semanas), piloto sobre una\nregion logistica acotada (6-8 semanas) y escalamiento progresivo al resto de la flota.\nResultados",
+    "source": "Propuesta_OrionLogistics_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_orionlogistics_2024_003",
+    "text": "region logistica acotada (6-8 semanas) y escalamiento progresivo al resto de la flota.\nResultados\nOrion Logistics (logistica). 12 sistemas integrados. 35% menos trabajo manual de conciliacion. Monitoreo de\n1.200 dispositivos IoT en fase piloto.\nLimitaciones y elementos que requieren validacion\nOrion Logistics (logistica). Este proyecto no demuestra experiencia especifica en banca ni en servicios\nfinancieros regulados. El modulo IoT se mantuvo en fase piloto y no fue escalado a produccion completa\ndentro del periodo documentado.",
+    "source": "Propuesta_OrionLogistics_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_pacifichealth_2024_001",
+    "text": "Propuesta Algoworks - Pacific Health Network: Clasificacion Clinica\ncon ML (2023-2024)\nEntendimiento del problema\nPacific Health Network (salud). Pacific Health Network (cliente ficticio, salud) necesitaba priorizar solicitudes\nclinicas entrantes y generar alertas analiticas para el personal medico, un proceso que hasta entonces era\ncompletamente manual.\nSolucion propuesta\nPacific Health Network (salud). Se desarrollo una plataforma de clasificacion basada en machine learning,\ncon un panel web para revision humana de cada clasificacion antes de su aplicacion - un flujo de revision\nhumana incorporado por diseno, no opcional.\nArquitectura",
+    "source": "Propuesta_PacificHealth_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_pacifichealth_2024_002",
+    "text": "humana incorporado por diseno, no opcional.\nArquitectura\nPacific Health Network (salud). Stack: Python, scikit-learn, MLflow, FastAPI, React. El modelo de\nclasificacion alcanzo 82% de precision en el conjunto de validacion, con seguimiento de experimentos via\nMLflow.\nEquipo asignado\nPacific Health Network (salud). Sofia Herrera (ML Engineer, 6 anos, salud y retail) lidero el desarrollo del\nmodelo de clasificacion y su evaluacion. Lucia Paredes (UX Researcher, 5 anos, salud y educacion) diseno\nel panel de revision humana junto al personal clinico.\nEnfoque de implementacion\nPacific Health Network (salud). Descubrimiento (2 semanas), arquitectura y diseno del modelo (3 semanas),",
+    "source": "Propuesta_PacificHealth_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_pacifichealth_2024_003",
+    "text": "Pacific Health Network (salud). Descubrimiento (2 semanas), arquitectura y diseno del modelo (3 semanas),\npiloto con un equipo clinico acotado (6-8 semanas) y escalamiento progresivo a mas areas.\nResultados\nPacific Health Network (salud). 82% de precision en el conjunto de validacion. 40% menos tiempo en la\nclasificacion inicial de solicitudes. Flujo de revision humana incorporado en produccion.\nLimitaciones y elementos que requieren validacion\nPacific Health Network (salud). No existe evidencia de uso de datos financieros ni de migraciones cloud a\ngran escala en este proyecto. Debe tratarse como evidencia de capacidad en ML y revision humana, no",
+    "source": "Propuesta_PacificHealth_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "propuesta_pacifichealth_2024_004",
+    "text": "gran escala en este proyecto. Debe tratarse como evidencia de capacidad en ML y revision humana, no\ncomo experiencia en plataformas de datos financieras.",
+    "source": "Propuesta_PacificHealth_2024.pdf",
+    "section_type": "experiencia_previa",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "cap_001",
+    "text": "Capacidad Data Engineering (CAP-001): Construcción de pipelines ETL/ELT y modelos analíticos. Tecnologias: Python; SQL; dbt. Nivel de confianza declarado: Alta. Evidencia: CASE-001;CASE-003.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Alta"
+    }
+  },
+  {
+    "chunk_id": "cap_002",
+    "text": "Capacidad Cloud Modernization (CAP-002): Diseño de arquitecturas cloud híbridas y migración incremental. Tecnologias: AWS; Azure; Terraform. Nivel de confianza declarado: Media. Evidencia: CASE-001.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Media"
+    }
+  },
+  {
+    "chunk_id": "cap_003",
+    "text": "Capacidad Machine Learning (CAP-003): Modelos predictivos y clasificación. Tecnologias: Python; scikit-learn; MLflow. Nivel de confianza declarado: Alta. Evidencia: CASE-002.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Alta"
+    }
+  },
+  {
+    "chunk_id": "cap_004",
+    "text": "Capacidad Generative AI (CAP-004): RAG, asistentes y extracción de información. Tecnologias: Python; vector DB; LLM APIs. Nivel de confianza declarado: Alta. Evidencia: CASE-004.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Alta"
+    }
+  },
+  {
+    "chunk_id": "cap_005",
+    "text": "Capacidad API Integration (CAP-005): Integración mediante APIs REST y eventos. Tecnologias: Python; Java; Kafka. Nivel de confianza declarado: Alta. Evidencia: CASE-001;CASE-003.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Alta"
+    }
+  },
+  {
+    "chunk_id": "cap_006",
+    "text": "Capacidad DevSecOps (CAP-006): CI/CD, pruebas automatizadas y observabilidad. Tecnologias: GitHub Actions; Docker; Kubernetes. Nivel de confianza declarado: Media. Evidencia: CASE-001.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Media"
+    }
+  },
+  {
+    "chunk_id": "cap_007",
+    "text": "Capacidad UX/UI (CAP-007): Prototipado y diseño de interfaces. Tecnologias: Figma. Nivel de confianza declarado: Media. Evidencia: CASE-002.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Media"
+    }
+  },
+  {
+    "chunk_id": "cap_008",
+    "text": "Capacidad IoT (CAP-008): Integración de sensores y edge computing. Tecnologias: Python; MQTT. Nivel de confianza declarado: Baja. Evidencia: CASE-003.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Baja"
+    }
+  },
+  {
+    "chunk_id": "cap_009",
+    "text": "Capacidad Legacy Mainframe (CAP-009): Modernización de sistemas mainframe. Tecnologias: COBOL; Java. Nivel de confianza declarado: Baja. Evidencia: No hay evidencia reciente; validar.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Baja"
+    }
+  },
+  {
+    "chunk_id": "cap_010",
+    "text": "Capacidad Data Governance (CAP-010): Catálogo, calidad, linaje y gobierno de datos. Tecnologias: SQL; Data Catalog. Nivel de confianza declarado: Media. Evidencia: CASE-001.",
+    "source": "Catalogo_Capacidades_Algoworks.csv",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "nivel_confianza": "Media"
+    }
+  },
+  {
+    "chunk_id": "exp_001",
+    "text": "María Torres (Data Engineering Lead), 9 años de experiencia. Tecnologias: Python; SQL; dbt; AWS. Sectores: Finanzas; retail. Evidencia: CASE-001;CASE-004.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "exp_002",
+    "text": "Diego Molina (Cloud Architect), 11 años de experiencia. Tecnologias: AWS; Azure; Terraform; Kubernetes. Sectores: Retail; logística. Evidencia: CASE-001;CASE-003.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "exp_003",
+    "text": "Sofía Herrera (ML Engineer), 6 años de experiencia. Tecnologias: Python; scikit-learn; MLflow. Sectores: Salud; retail. Evidencia: CASE-002.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "exp_004",
+    "text": "Carlos Vega (Integration Architect), 8 años de experiencia. Tecnologias: Java; Python; Kafka; REST. Sectores: Logística; finanzas. Evidencia: CASE-003;CASE-004.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "exp_005",
+    "text": "Lucía Paredes (UX Researcher), 5 años de experiencia. Tecnologias: Figma; entrevistas; prototipado. Sectores: Salud; educación. Evidencia: CASE-002.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "exp_006",
+    "text": "Andrés Ruiz (Legacy Specialist), 12 años de experiencia. Tecnologias: COBOL; Java; APIs. Sectores: No hay caso financiero reciente asociado. Evidencia: Requiere validación.",
+    "source": "Equipo_Expertos_Algoworks.csv",
+    "section_type": "equipo",
+    "metadata": {}
+  },
+  {
+    "chunk_id": "ref_001",
+    "text": "CASE-001 - Nimbus Retail Group (Retail): Data platform / ELT, periodo 2024-2025, estado Finalizado. Evidencia: 18 fuentes; 27 reglas de calidad.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Retail",
+      "estado": "Finalizado"
+    }
+  },
+  {
+    "chunk_id": "ref_002",
+    "text": "CASE-002 - Pacific Health Network (Salud): ML + workflow humano, periodo 2023-2024, estado Finalizado. Evidencia: 82% precisión validación.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Salud",
+      "estado": "Finalizado"
+    }
+  },
+  {
+    "chunk_id": "ref_003",
+    "text": "CASE-003 - Orion Logistics (Logística): Integración API/eventos + IoT, periodo 2022-2024, estado Finalizado. Evidencia: 12 sistemas; 1.200 dispositivos piloto.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Logística",
+      "estado": "Finalizado"
+    }
+  },
+  {
+    "chunk_id": "ref_004",
+    "text": "CASE-004 - Aurora Bank (Servicios financieros): Data lakehouse + gobierno, periodo 2021-2023, estado Finalizado. Evidencia: 9 fuentes; 22 controles de calidad.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Servicios financieros",
+      "estado": "Finalizado"
+    }
+  },
+  {
+    "chunk_id": "ref_005",
+    "text": "CASE-005 - EducaPlus (Educación): Plataforma e-learning, periodo 2023, estado Finalizado. Evidencia: No contiene evidencia financiera.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Educación",
+      "estado": "Finalizado"
+    }
+  },
+  {
+    "chunk_id": "ref_006",
+    "text": "CASE-006 - GreenGrid (Energía): IoT industrial, periodo 2024, estado Piloto. Evidencia: No contiene evidencia bancaria.",
+    "source": "Referencias_Proyectos_Algoworks.csv",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "sector": "Energía",
+      "estado": "Piloto"
+    }
+  },
+  {
+    "chunk_id": "kb_001",
+    "text": "Algoworks simulado tiene capacidad de construir pipelines ETL/ELT, modelos analíticos y controles de calidad.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "tipo": "capacidad",
+      "tema": "data engineering",
+      "confianza": "alta"
+    }
+  },
+  {
+    "chunk_id": "kb_002",
+    "text": "CASE-004 documenta un proyecto ficticio para Aurora Bank con 9 fuentes integradas y 22 controles de calidad.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "tipo": "caso",
+      "tema": "finanzas",
+      "confianza": "alta"
+    }
+  },
+  {
+    "chunk_id": "kb_003",
+    "text": "CASE-001 documenta integración de 18 fuentes y 27 reglas de calidad.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "experiencia_previa",
+    "metadata": {
+      "tipo": "caso",
+      "tema": "retail",
+      "confianza": "alta"
+    }
+  },
+  {
+    "chunk_id": "kb_004",
+    "text": "La metodología simulada contempla descubrimiento, arquitectura, piloto y escalamiento.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "tipo": "metodologia",
+      "tema": "piloto",
+      "confianza": "media"
+    }
+  },
+  {
+    "chunk_id": "kb_005",
+    "text": "Las prácticas simuladas no acreditan certificaciones ISO, SOC, PCI-DSS u otras.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "capacidades_tecnicas",
+    "metadata": {
+      "tipo": "seguridad",
+      "tema": "certificaciones",
+      "confianza": "alta"
+    }
+  },
+  {
+    "chunk_id": "kb_006",
+    "text": "Andrés Ruiz tiene experiencia declarada en COBOL, Java y APIs, pero no existe un caso financiero reciente asociado en el dataset.",
+    "source": "Repositorio_Conocimiento_Algoworks.json",
+    "section_type": "equipo",
+    "metadata": {
+      "tipo": "experto",
+      "tema": "legacy",
+      "confianza": "media"
+    }
   }
 ]

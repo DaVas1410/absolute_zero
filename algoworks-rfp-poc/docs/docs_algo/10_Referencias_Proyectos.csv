@@ -1,0 +1,7 @@
+id,cliente,sector,alcance,periodo,estado,evidencia
+CASE-001,Nimbus Retail Group,Retail,Data platform / ELT,2024-2025,Finalizado,18 fuentes; 27 reglas de calidad
+CASE-002,Pacific Health Network,Salud,ML + workflow humano,2023-2024,Finalizado,82% precisión validación
+CASE-003,Orion Logistics,Logística,Integración API/eventos + IoT,2022-2024,Finalizado,12 sistemas; 1.200 dispositivos piloto
+CASE-004,Aurora Bank,Servicios financieros,Data lakehouse + gobierno,2021-2023,Finalizado,9 fuentes; 22 controles de calidad
+CASE-005,EducaPlus,Educación,Plataforma e-learning,2023,Finalizado,No contiene evidencia financiera
+CASE-006,GreenGrid,Energía,IoT industrial,2024,Piloto,No contiene evidencia bancaria

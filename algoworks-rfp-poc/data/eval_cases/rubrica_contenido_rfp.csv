@@ -1,0 +1,11 @@
+id,seccion,que_debe_responder,prioridad,fuentes_ejemplo
+REQ-01,Arquitectura objetivo,Descripción de arquitectura de datos moderna,Alta,CASE-004;CASE-001
+REQ-02,Integración,Integrar fuentes mediante APIs/batch/eventos,Alta,CASE-001;CASE-003;CASE-004
+REQ-03,Calidad de datos,"Controles, validación y monitoreo",Alta,CASE-001;CASE-004
+REQ-04,Seguridad,"Controles de acceso, cifrado y auditoría",Alta,11_Politicas_Simuladas.md
+REQ-05,Migración,Plan incremental y piloto,Media,08_Metodologia_Entrega.md
+REQ-06,Experiencia financiera,Evidencia de proyectos financieros,Alta,CASE-004
+REQ-07,Certificación específica,Responder si se dispone de PCI-DSS u otra certificación solicitada,Alta,Requiere validación
+REQ-08,Equipo,Perfiles y experiencia relevantes,Media,09_Equipo_Expertos.csv
+REQ-09,Cronograma,Fases y tiempos de referencia,Media,08_Metodologia_Entrega.md
+REQ-10,Casos de éxito,Presentar experiencias similares y su relación con el alcance,Alta,CASE-001;CASE-004
