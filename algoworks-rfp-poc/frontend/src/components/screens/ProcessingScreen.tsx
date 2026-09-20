@@ -1,8 +1,17 @@
 import { FileSearch } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import type { TraceEvent } from '../../api/types'
 import { Callout } from '../ui/Callout'
 import { ProgressStep, type StepState } from '../ui/ProgressStep'
+import { ReasoningFeed } from '../ui/ReasoningFeed'
 import './ProcessingScreen.css'
+
+const STEP_ORDER = [
+  'extract_requirements',
+  'retrieve_chunks',
+  'generate_draft',
+  'verify_citations',
+  'compute_traceability_metrics',
+] as const
 
 const STEPS: { title: string; subtitle: string }[] = [
   { title: 'Extraer requisitos', subtitle: 'Convirtiendo el RFP en requisitos estructurados.' },
@@ -12,38 +21,30 @@ const STEPS: { title: string; subtitle: string }[] = [
   { title: 'Calcular métricas de trazabilidad', subtitle: 'Auditando la corrida y midiendo el respaldo de cada cita.' },
 ]
 
-const STEP_INTERVAL_MS = 3000
-
 interface ProcessingScreenProps {
   isSettled: boolean
   hasError: boolean
+  /** Real trace_log from GET /rfp/{id}/progress, growing as the backend's
+   * background pipeline thread actually completes each node - not a timer. */
+  traceLog: TraceEvent[]
 }
 
 /**
- * POST /rfp/process is a single blocking call with no incremental signal
- * (SSE streaming is out of scope), so there's no real per-node completion
- * event to bind to. Steps advance on a fixed timer using the 5 real graph
- * node names while the request is in flight - a labeled, bounded
- * simulation, not fabricated content - and resolve to done/error on settle.
+ * furthestStepIndex is the highest STEP_ORDER index seen in the trace log so
+ * far - not the last event's index - so a generate_draft/verify_citations
+ * retry loop (the node repeating) never makes the progress rail regress.
  */
-export function ProcessingScreen({ isSettled, hasError }: ProcessingScreenProps) {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+function furthestStepIndex(traceLog: TraceEvent[]): number {
+  let furthest = -1
+  for (const event of traceLog) {
+    const index = STEP_ORDER.indexOf(event.node as (typeof STEP_ORDER)[number])
+    if (index > furthest) furthest = index
+  }
+  return furthest
+}
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setActiveIndex((current) => Math.min(current + 1, STEPS.length - 1))
-    }, STEP_INTERVAL_MS)
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isSettled && intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
-  }, [isSettled])
+export function ProcessingScreen({ isSettled, hasError, traceLog }: ProcessingScreenProps) {
+  const activeIndex = isSettled && !hasError ? STEPS.length - 1 : Math.max(furthestStepIndex(traceLog), 0)
 
   function stateFor(index: number): StepState {
     if (isSettled) {
@@ -80,9 +81,7 @@ export function ProcessingScreen({ isSettled, hasError }: ProcessingScreenProps)
             />
           ))}
         </div>
-        <div className="td-processing__illustration" aria-hidden="true">
-          <FileSearch />
-        </div>
+        <ReasoningFeed traceLog={traceLog} isRunning={!isSettled} />
       </div>
 
       <Callout icon={<FileSearch />} title="Basado en un corpus propio">

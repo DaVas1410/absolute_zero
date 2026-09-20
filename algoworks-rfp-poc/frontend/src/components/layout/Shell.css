@@ -9,3 +9,13 @@
   min-width: 0;
   padding: var(--space-10) var(--space-12);
 }
+
+@media (max-width: 768px) {
+  .td-shell {
+    flex-direction: column;
+  }
+
+  .td-shell__content {
+    padding: var(--space-6) var(--space-4);
+  }
+}

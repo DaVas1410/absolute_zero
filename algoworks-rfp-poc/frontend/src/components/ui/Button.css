@@ -31,7 +31,7 @@
 }
 
 .td-button--secondary {
-  background: var(--surface);
+  background: var(--surface-raised);
   color: var(--ink);
   border-color: var(--border);
 }

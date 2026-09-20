@@ -4,6 +4,7 @@ Contrato de endpoints: ver CLAUDE.md, sección 5.
 """
 
 import logging
+import threading
 from functools import lru_cache
 from http import HTTPStatus
 from typing import Callable
@@ -20,7 +21,16 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 load_dotenv()
 
-from api.schemas import Chunk, CorpusIngestResult, PipelineResult, ProposalDocument, SectionType, TraceabilityReport, TraceEvent
+from api.schemas import (
+    Chunk,
+    CorpusIngestResult,
+    PipelineResult,
+    ProposalDocument,
+    RfpProgress,
+    SectionType,
+    TraceabilityReport,
+    TraceEvent,
+)
 from graph.compose_graph import run_compose
 from graph.graph import run_pipeline
 from graph.llm import get_chat_llm
@@ -91,6 +101,12 @@ _pipeline_results: dict[str, PipelineResult] = {}
 # verification_rate en GET /rfp/{rfp_id}/traceability-report.
 _feedback: dict[str, bool] = {}
 
+# Progreso en vivo de un POST /rfp/process/start por rfp_id (ver RfpProgress).
+# El hilo de fondo escribe, GET /rfp/{rfp_id}/progress lee - protegido por
+# _progress_lock porque ambos lados corren en threads distintos.
+_pipeline_progress: dict[str, RfpProgress] = {}
+_progress_lock = threading.Lock()
+
 
 PipelineRunner = Callable[[str, str], PipelineResult]
 
@@ -129,6 +145,39 @@ def _default_pipeline_runner(rfp_id: str, rfp_text: str) -> PipelineResult:
 
 def get_pipeline_runner() -> PipelineRunner:
     return _default_pipeline_runner
+
+
+def _run_pipeline_in_background(rfp_id: str, rfp_text: str) -> None:
+    def on_progress(trace_log: list[TraceEvent]) -> None:
+        with _progress_lock:
+            _pipeline_progress[rfp_id].trace_log = trace_log
+
+    try:
+        llm_small = get_chat_llm("small")
+        llm_large = get_chat_llm("large")
+        vectorstore, embeddings, chunk_texts_by_id, _chunk_by_id = _get_corpus_resources()
+        result = run_pipeline(
+            rfp_id,
+            rfp_text,
+            llm_small,
+            llm_large,
+            vectorstore,
+            embeddings,
+            chunk_texts_by_id,
+            on_progress=on_progress,
+        )
+        _pipeline_results[rfp_id] = result
+        with _progress_lock:
+            _pipeline_progress[rfp_id] = RfpProgress(
+                rfp_id=rfp_id, status="done", trace_log=result.trace_log, result=result
+            )
+    except Exception as exc:
+        logger.exception("Error corriendo el pipeline en background para rfp_id=%s", rfp_id)
+        with _progress_lock:
+            trace_log = _pipeline_progress[rfp_id].trace_log if rfp_id in _pipeline_progress else []
+            _pipeline_progress[rfp_id] = RfpProgress(
+                rfp_id=rfp_id, status="error", trace_log=trace_log, error=str(exc)
+            )
 
 
 ComposeRunner = Callable[[str], ProposalDocument]
@@ -222,6 +271,51 @@ def process_rfp_pdf(
     result = pipeline_runner(rfp_id, rfp_text)
     _pipeline_results[rfp_id] = result
     return result
+
+
+@app.post("/rfp/process/start")
+def start_process_rfp(payload: RFPProcessRequest) -> dict[str, str]:
+    """Version no bloqueante de POST /rfp/process: arranca el pipeline en un
+    hilo de fondo y devuelve de inmediato. El progreso en vivo (trace_log
+    creciendo nodo por nodo) se consulta con GET /rfp/{rfp_id}/progress."""
+    with _progress_lock:
+        _pipeline_progress[payload.rfp_id] = RfpProgress(rfp_id=payload.rfp_id, status="running", trace_log=[])
+    threading.Thread(
+        target=_run_pipeline_in_background,
+        args=(payload.rfp_id, payload.rfp_text),
+        daemon=True,
+    ).start()
+    return {"rfp_id": payload.rfp_id, "status": "started"}
+
+
+@app.post("/rfp/process/pdf/start")
+def start_process_rfp_pdf(file: UploadFile = File(...), rfp_id: str = Form(...)) -> dict[str, str]:
+    file_bytes = file.file.read()
+    try:
+        rfp_text = extract_pdf_text(file_bytes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    with _progress_lock:
+        _pipeline_progress[rfp_id] = RfpProgress(rfp_id=rfp_id, status="running", trace_log=[])
+    threading.Thread(
+        target=_run_pipeline_in_background,
+        args=(rfp_id, rfp_text),
+        daemon=True,
+    ).start()
+    return {"rfp_id": rfp_id, "status": "started"}
+
+
+@app.get("/rfp/{rfp_id}/progress", response_model=RfpProgress)
+def get_progress(rfp_id: str) -> RfpProgress:
+    with _progress_lock:
+        snapshot = _pipeline_progress.get(rfp_id)
+    if snapshot is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No hay progreso para rfp_id={rfp_id!r}. Ejecuta POST /rfp/process/start primero.",
+        )
+    return snapshot
 
 
 @app.get("/rfp/{rfp_id}/trace", response_model=list[TraceEvent])

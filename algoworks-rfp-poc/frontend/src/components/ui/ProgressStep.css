@@ -34,12 +34,12 @@
 
 .td-step__dot--active {
   border: 2px solid var(--primary);
-  background: var(--surface);
+  background: var(--surface-raised);
 }
 
 .td-step__dot--pending {
   border: 2px solid var(--border-strong);
-  background: var(--surface);
+  background: var(--surface-raised);
 }
 
 .td-step__dot--error {

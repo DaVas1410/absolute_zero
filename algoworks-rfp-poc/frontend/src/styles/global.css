@@ -48,11 +48,16 @@ a {
   outline-offset: 2px;
 }
 
-/* Typography scale - class names match the design doc's style names. */
+/* Typography scale - class names match the design doc's style names.
+   .text-display and .text-h2 are used exclusively for document content
+   (the RFP hero line, requirement text, proposal section headings) so
+   they carry the serif; everything else is the sans instrument face. */
 .text-display {
-  font-size: 28px;
-  line-height: 36px;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: 34px;
+  line-height: 40px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .text-h1 {
@@ -62,9 +67,10 @@ a {
 }
 
 .text-h2 {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 26px;
+  font-weight: 600;
 }
 
 .text-h3 {
@@ -97,6 +103,31 @@ a {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* Document content: the actual drafted/cited prose - set in the serif
+   built for citation-dense text, with the extra line-height serif body
+   wants. Used by DraftText for every generated paragraph. */
+.text-doc-body {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 27px;
+  font-weight: 400;
+  max-width: 68ch;
+}
+
+.text-doc-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* Data: ids, scores, timestamps, token counts - tabular figures, never
+   prose. */
+.text-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .visually-hidden {

@@ -3,9 +3,11 @@ extract_requirements -> retrieve_chunks -> generate_draft -> verify_citations
 -> compute_traceability_metrics, con reintento condicional de
 verify_citations a generate_draft (max. 1)."""
 
+from typing import Callable
+
 from langgraph.graph import END, StateGraph
 
-from api.schemas import PipelineResult
+from api.schemas import PipelineResult, TraceEvent
 from graph.nodes.compute_traceability_metrics import make_compute_traceability_metrics_node
 from graph.nodes.extract_requirements import make_extract_requirements_node
 from graph.nodes.generate_draft import make_generate_draft_node
@@ -57,7 +59,13 @@ def run_pipeline(
     embeddings,
     chunk_texts_by_id: dict[str, str],
     top_k: int = DEFAULT_TOP_K,
+    on_progress: Callable[[list[TraceEvent]], None] | None = None,
 ) -> PipelineResult:
+    """Corre el grafo hasta el final. Si se pasa `on_progress`, el grafo se
+    ejecuta nodo por nodo (`stream_mode="values"`) y se llama con el
+    `trace_log` acumulado despues de cada nodo, para permitir progreso en
+    vivo (ver POST /rfp/process/start); sin callback usa `.invoke()` normal,
+    sin cambios de comportamiento para el resto de los llamadores."""
     compiled_graph = build_graph(llm_small, llm_large, vectorstore, embeddings, chunk_texts_by_id, top_k)
     initial_state: GraphState = {
         "rfp_id": rfp_id,
@@ -74,7 +82,13 @@ def run_pipeline(
         "metrics": None,
         "reasoning_path_audit": None,
     }
-    final_state = compiled_graph.invoke(initial_state)
+    if on_progress is None:
+        final_state = compiled_graph.invoke(initial_state)
+    else:
+        final_state = initial_state
+        for state_value in compiled_graph.stream(initial_state, stream_mode="values"):
+            final_state = state_value
+            on_progress(list(state_value["trace_log"]))
     return PipelineResult(
         rfp_id=rfp_id,
         requirements=final_state["requirements"],

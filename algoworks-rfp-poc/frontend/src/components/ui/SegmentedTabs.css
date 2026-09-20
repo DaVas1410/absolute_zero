@@ -19,7 +19,7 @@
 }
 
 .td-segmented__item.is-active {
-  background: var(--surface);
+  background: var(--surface-raised);
   color: var(--ink);
   box-shadow: var(--shadow-sm);
 }

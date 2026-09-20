@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { FileCheck2 } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { ExampleChips } from '../ui/ExampleChips'
 import { InputPanel } from '../ui/InputPanel'
@@ -11,7 +12,6 @@ const MAX_LENGTH = 20000
 const METHOD_TABS: TabOption[] = [
   { id: 'paste', label: 'Pegar texto' },
   { id: 'upload', label: 'Subir documento' },
-  { id: 'template', label: 'Usar plantilla' },
 ]
 
 interface HomeScreenProps {
@@ -38,27 +38,29 @@ export function HomeScreen({ onSubmit, onSubmitFile }: HomeScreenProps) {
     setActiveTab('paste')
   }
 
-  function handleChipSelect(sampleId: string) {
-    const sample = SAMPLE_RFPS.find((s) => s.id === sampleId)
-    if (!sample) return
-    setPdfFile(null)
-    setRfpText(sample.text)
-    setActiveTab('paste')
-  }
-
   function handleTextChange(value: string) {
     setPdfFile(null)
     setRfpText(value)
   }
 
+  function handleSelectSample(id: string) {
+    const sample = SAMPLE_RFPS.find((rfp) => rfp.id === id)
+    if (!sample) return
+    setPdfFile(null)
+    setRfpText(sample.text.slice(0, MAX_LENGTH))
+  }
+
   return (
     <div className="td-home">
       <div className="td-home__hero">
-        <h1 className="text-display">Redacta una respuesta a RFP citada y verificada.</h1>
-        <p className="text-body td-home__hero-sub">
-          Pega la solicitud del cliente y Trace Desk extrae los requisitos, recupera fuentes de
-          respaldo y redacta una respuesta que puedes rastrear hasta cada afirmación.
-        </p>
+        <div className="td-home__seal" aria-hidden="true">TD</div>
+        <div className="td-home__hero-text">
+          <h1 className="text-display">Redacta una respuesta a RFP citada y verificada.</h1>
+          <p className="text-body td-home__hero-sub">
+            Pega la solicitud del cliente y Trace Desk extrae los requisitos, recupera fuentes de
+            respaldo y redacta una respuesta que puedes rastrear hasta cada afirmación.
+          </p>
+        </div>
       </div>
 
       <div className="td-home__card">
@@ -84,31 +86,39 @@ export function HomeScreen({ onSubmit, onSubmitFile }: HomeScreenProps) {
                 className="visually-hidden"
                 onChange={(event) => handleFileChange(event.target.files?.[0] ?? null)}
               />
-              {pdfFile && <p className="text-caption td-home__upload-loaded">PDF listo: {pdfFile.name}</p>}
-              {rfpText && <p className="text-caption td-home__upload-loaded">Archivo cargado ({rfpText.length} caracteres).</p>}
+              {pdfFile && (
+                <p className="text-caption td-home__upload-loaded">
+                  PDF listo: <span className="text-mono">{pdfFile.name}</span>
+                </p>
+              )}
+              {rfpText && (
+                <p className="text-caption td-home__upload-loaded">
+                  Archivo cargado (<span className="text-mono">{rfpText.length}</span> caracteres).
+                </p>
+              )}
             </div>
           ) : (
-            <InputPanel
-              value={rfpText}
-              onChange={handleTextChange}
-              placeholder="Pega aqui el texto del RFP o requerimiento del cliente..."
-              maxLength={MAX_LENGTH}
-            />
+            <>
+              <InputPanel
+                value={rfpText}
+                onChange={handleTextChange}
+                placeholder="Pega aqui el texto del RFP o requerimiento del cliente..."
+                maxLength={MAX_LENGTH}
+              />
+              <div className="td-home__examples">
+                <p className="text-label td-home__examples-label">Probar con un ejemplo</p>
+                <ExampleChips
+                  chips={SAMPLE_RFPS.map((rfp) => ({ id: rfp.id, label: rfp.label }))}
+                  onSelect={handleSelectSample}
+                />
+              </div>
+            </>
           )}
         </div>
 
-        {activeTab !== 'upload' && (
-          <div className="td-home__examples">
-            <p className="text-caption td-home__examples-label">Ejemplos</p>
-            <ExampleChips
-              chips={SAMPLE_RFPS.map((sample) => ({ id: sample.id, label: sample.label }))}
-              onSelect={handleChipSelect}
-            />
-          </div>
-        )}
-
         <div className="td-home__actions">
           <Button
+            icon={<FileCheck2 />}
             disabled={!rfpText.trim() && !pdfFile}
             onClick={() => (pdfFile ? onSubmitFile(pdfFile) : onSubmit(rfpText))}
           >

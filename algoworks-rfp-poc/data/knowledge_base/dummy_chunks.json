@@ -104,13 +104,6 @@
     "metadata": {}
   },
   {
-    "chunk_id": "distractor_educaplus_001",
-    "text": "Documento historico - Programa de educacion digital (EducaPlus,\n2023)\nResumen\nCliente: EducaPlus (ficticio). Ano: 2023. Este proyecto implemento una plataforma de contenidos educativos\ncon autenticacion, analitica de usuarios y aplicacion movil.\nResultado\n25.000 usuarios registrados. Aplicacion movil desarrollada en React Native. Dashboard de participacion.\nNota\nEl proyecto es realista como referencia tecnologica, pero su pertinencia para un RFP de servicios financieros\nes limitada. No contiene evidencia de plataforma financiera ni de integracion de datos a escala.",
-    "source": "Distractor_EducaPlus.pdf",
-    "section_type": "experiencia_previa",
-    "metadata": {}
-  },
-  {
     "chunk_id": "propuesta_aurorabank_2023_001",
     "text": "Propuesta Algoworks - Aurora Bank: Plataforma de Datos y Gobierno\n(2021-2023)\nEntendimiento del problema\nAurora Bank (servicios financieros). Aurora Bank (cliente ficticio, servicios financieros) necesitaba consolidar\ninformacion de clientes proveniente de multiples sistemas y generar indicadores de riesgo confiables. La\ninformacion estaba fragmentada entre plataformas transaccionales y no existia un catalogo unico de datos ni\ncontroles de calidad sistematicos.\nSolucion propuesta\nAurora Bank (servicios financieros). Algoworks construyo un data lakehouse con procesos de ingesta\nestandarizados, controles de calidad automatizados, un catalogo de datos con propietarios definidos y APIs",
     "source": "Propuesta_AuroraBank_2023.pdf",

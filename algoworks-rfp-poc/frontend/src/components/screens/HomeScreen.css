@@ -3,7 +3,36 @@
 }
 
 .td-home__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
   margin-bottom: var(--space-12);
+}
+
+/* The wordmark's brass ring, reused at the entry point: this is where a
+   case gets opened, so it earns its own seal - not a decorative icon. */
+.td-home__seal {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--brand);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--primary);
+  margin-top: var(--space-1);
+}
+
+.td-home__hero-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .td-home__hero-sub {
@@ -12,15 +41,23 @@
   max-width: 560px;
 }
 
+/* A dossier cover, not a settings card: raised well past the rest of the
+   page's flat surfaces, so it reads as the one document open on the desk. */
 .td-home__card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--surface-raised);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-lg);
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .td-home__hero {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
 }
 
 .td-home__field {
@@ -46,6 +83,10 @@
 .td-home__upload-loaded {
   color: var(--success);
   margin: 0;
+}
+
+.td-home__examples {
+  margin-top: var(--space-3);
 }
 
 .td-home__examples-label {

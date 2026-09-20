@@ -57,11 +57,11 @@ export function TraceLogTab({ rfpId, traceLog: initialTraceLog }: TraceLogTabPro
         <tbody>
           {traceLog.map((event, index) => (
             <tr key={`${event.node}-${index}`}>
-              <td>{event.node}</td>
-              <td>{new Date(event.timestamp).toLocaleTimeString()}</td>
-              <td>{formatDuration(event.duration_ms)}</td>
-              <td>{event.tokens ? formatTokens(event.tokens.total_tokens) : '—'}</td>
-              <td className="td-trace-tab__reasoning">{event.reasoning}</td>
+              <td className="text-mono">{event.node}</td>
+              <td className="text-mono">{new Date(event.timestamp).toLocaleTimeString()}</td>
+              <td className="text-mono">{formatDuration(event.duration_ms)}</td>
+              <td className="text-mono">{event.tokens ? formatTokens(event.tokens.total_tokens) : '—'}</td>
+              <td className="text-doc-quote td-trace-tab__reasoning">{event.reasoning}</td>
             </tr>
           ))}
         </tbody>

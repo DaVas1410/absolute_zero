@@ -9,12 +9,16 @@
   color: var(--caution);
 }
 
+/* A ledger, not an admin grid: a brass spine down the left edge (the same
+   accent-edge device the sidebar uses for its active tab), a rule instead
+   of a filled header, and alternating ruled rows like ledger paper. */
 .td-trace-tab__table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--surface);
+  background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  box-shadow: inset 3px 0 0 var(--brand);
   overflow: hidden;
 }
 
@@ -34,6 +38,11 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--brand);
+}
+
+.td-trace-tab__table tbody tr:nth-child(even) {
   background: var(--surface-sunken);
 }
 

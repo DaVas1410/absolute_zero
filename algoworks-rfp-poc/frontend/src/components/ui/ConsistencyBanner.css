@@ -35,6 +35,10 @@
   color: var(--ink);
 }
 
+.td-consistency-banner__title {
+  margin: 0;
+}
+
 .td-consistency-banner__issues {
   margin: var(--space-1) 0 0;
   padding-left: var(--space-4);

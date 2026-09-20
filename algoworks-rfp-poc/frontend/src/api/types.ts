@@ -98,6 +98,37 @@ export interface ApiErrorBody {
   detail: string
 }
 
+// --- live progress (POST /rfp/process/start + GET /rfp/{id}/progress) ---
+
+export type RfpProgressStatus = 'running' | 'done' | 'error'
+
+export interface RfpProgress {
+  rfp_id: string
+  status: RfpProgressStatus
+  trace_log: TraceEvent[]
+  result: PipelineResult | null
+  error: string | null
+}
+
+// --- corpus ingestion (POST /corpus/ingest) ---
+
+export type IngestSectionType = 'experiencia_previa' | 'capacidades_tecnicas' | 'equipo'
+
+export interface Chunk {
+  chunk_id: string
+  text: string
+  source: string
+  section_type: string
+  metadata: Record<string, unknown>
+}
+
+export interface CorpusIngestResult {
+  source: string
+  section_type: string
+  chunks_added: Chunk[]
+  chunk_count: number
+}
+
 // --- compose_proposal pipeline (POST /rfp/{id}/compose) ---
 
 export interface ChunkCitation {

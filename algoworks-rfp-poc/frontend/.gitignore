@@ -14,6 +14,11 @@ dist-ssr
 .env
 .env.local
 
+# Python test scripts under frontend/tests (browser-driven checks) leave
+# bytecode caches here; never source, never worth committing.
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

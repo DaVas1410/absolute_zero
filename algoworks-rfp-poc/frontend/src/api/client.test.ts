@@ -5,6 +5,7 @@ import {
   composeProposal,
   getTrace,
   getTraceabilityReport,
+  ingestCorpusDocument,
   processRfp,
   processRfpPdf,
   submitFeedback,
@@ -138,6 +139,56 @@ describe('getTraceabilityReport', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, report)))
 
     await expect(getTraceabilityReport('rfp_1')).resolves.toEqual(report)
+  })
+})
+
+describe('ingestCorpusDocument', () => {
+  it('posts a multipart body with file + section_type, omitting an empty source', async () => {
+    const payload = {
+      source: 'propuesta.pdf',
+      section_type: 'experiencia_previa',
+      chunks_added: [],
+      chunk_count: 0,
+    }
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, payload))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const file = new File(['contenido'], 'propuesta.pdf', { type: 'application/pdf' })
+    const result = await ingestCorpusDocument(file, 'experiencia_previa')
+
+    expect(result).toEqual(payload)
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('http://localhost:8000/corpus/ingest')
+    expect(init.method).toBe('POST')
+    expect(init.body).toBeInstanceOf(FormData)
+    const body = init.body as FormData
+    expect(body.get('section_type')).toBe('experiencia_previa')
+    expect(body.get('source')).toBeNull()
+  })
+
+  it('includes a trimmed source field when provided', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse(200, { source: 'x', section_type: 'equipo', chunks_added: [], chunk_count: 0 }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const file = new File(['contenido'], 'equipo.pdf', { type: 'application/pdf' })
+    await ingestCorpusDocument(file, 'equipo', '  Equipo_Algoworks_2026.md  ')
+
+    const body = fetchMock.mock.calls[0][1].body as FormData
+    expect(body.get('source')).toBe('Equipo_Algoworks_2026.md')
+  })
+
+  it('throws ApiError on a 422 (invalid PDF)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(422, { error: 'Unprocessable Entity', detail: 'El PDF no contiene texto extraíble.' }),
+      ),
+    )
+    const file = new File(['x'], 'vacio.pdf', { type: 'application/pdf' })
+
+    await expect(ingestCorpusDocument(file, 'capacidades_tecnicas')).rejects.toMatchObject({ status: 422 })
   })
 })
 

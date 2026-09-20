@@ -1,8 +1,19 @@
+/* A single ledger strip, not five separate shadowed cards - one summary
+   line with hairline rules between its columns, like a receipt total. */
 .td-results__metrics {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-3);
+  display: flex;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
+}
+
+.td-results__metrics > * {
+  border-right: 1px solid var(--border);
+}
+
+.td-results__metrics > *:last-child {
+  border-right: none;
 }
 
 .td-results__banner {
@@ -15,6 +26,12 @@
 
 @media (max-width: 1100px) {
   .td-results__metrics {
-    grid-template-columns: repeat(2, 1fr);
+    flex-wrap: wrap;
+  }
+
+  .td-results__metrics > * {
+    flex: 1 1 50%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 }

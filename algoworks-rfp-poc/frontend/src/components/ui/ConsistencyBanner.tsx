@@ -25,7 +25,7 @@ export function ConsistencyBanner({ audit }: ConsistencyBannerProps) {
     <div className="td-consistency-banner td-consistency-banner--caution">
       <AlertTriangle />
       <div>
-        <p className="text-body" style={{ margin: 0 }}>
+        <p className="text-body td-consistency-banner__title">
           {audit.issues.length} problema(s) detectado(s) en el camino de ejecución
         </p>
         <ul className="td-consistency-banner__issues">

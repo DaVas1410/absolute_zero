@@ -100,6 +100,34 @@ function ProposalSectionCard({ section, verification, viewMode, selectedChunkId,
   )
 }
 
+function ProposalCover({ proposal, showSeal }: { proposal: ProposalDocument; showSeal: boolean }) {
+  const generatedAt = proposal.trace_log.at(-1)?.timestamp
+  const verified = proposal.metrics.sections_supported
+  const tracked = proposal.metrics.sections_supported + proposal.metrics.sections_needing_review
+  const isFullyVerified = tracked > 0 && verified === tracked
+
+  return (
+    <div className="td-proposal-tab__cover">
+      <div className="td-proposal-tab__cover-text">
+        <h1 className="text-display">Propuesta consolidada — {proposal.rfp_id}</h1>
+        {generatedAt && (
+          <p className="text-body-sm td-proposal-tab__cover-date">
+            Generado el <span className="text-mono">{new Date(generatedAt).toLocaleString()}</span>
+          </p>
+        )}
+      </div>
+      {showSeal && tracked > 0 && (
+        <div className={`td-proposal-tab__seal ${isFullyVerified ? 'is-verified' : 'is-partial'}`}>
+          <span className="text-mono td-proposal-tab__seal-count">
+            {verified}/{tracked}
+          </span>
+          <span className="td-proposal-tab__seal-label">verificado</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProposalMetrics({ metrics }: { metrics: ProposalDocument['metrics'] }) {
   return (
     <div className="td-results__metrics">
@@ -145,6 +173,8 @@ export function ProposalTab({ proposal, isLoading, error, onRegenerate }: Propos
 
   return (
     <div className="td-proposal-tab">
+      <ProposalCover proposal={proposal} showSeal={viewMode === 'internal'} />
+
       <div className="td-proposal-tab__toolbar">
         <SegmentedTabs options={VIEW_MODE_TABS} activeId={viewMode} onChange={(id) => setViewMode(id as ProposalViewMode)} />
         <Button

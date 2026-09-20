@@ -15,7 +15,7 @@ export function DraftText({ text, citationNumbers, selectedChunkId, onSelectChun
   const tokens = parseCitationMarkers(text)
 
   return (
-    <p className="text-body">
+    <p className="text-doc-body">
       {tokens.map((token, index) => {
         if (token.kind === 'text') {
           return <Fragment key={index}>{token.value}</Fragment>

@@ -30,14 +30,19 @@ export function RequirementCard({
 }: RequirementCardProps) {
   const [feedback, setFeedback] = useState<boolean | null>(null)
   const [feedbackError, setFeedbackError] = useState<string | null>(null)
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false)
 
   async function handleFeedback(accepted: boolean) {
+    if (isSubmittingFeedback) return
+    setIsSubmittingFeedback(true)
     setFeedbackError(null)
     try {
       await submitFeedback(requirement.req_id, accepted)
       setFeedback(accepted)
     } catch (err) {
       setFeedbackError(err instanceof Error ? err.message : 'No se pudo enviar el feedback.')
+    } finally {
+      setIsSubmittingFeedback(false)
     }
   }
 
@@ -104,10 +109,10 @@ export function RequirementCard({
       )}
 
       <div className="td-req-card__feedback">
-        <Button weight="secondary" onClick={() => handleFeedback(true)}>
+        <Button weight="secondary" disabled={isSubmittingFeedback} onClick={() => handleFeedback(true)}>
           Aceptar
         </Button>
-        <Button weight="ghost" onClick={() => handleFeedback(false)}>
+        <Button weight="ghost" disabled={isSubmittingFeedback} onClick={() => handleFeedback(false)}>
           Rechazar
         </Button>
         {feedbackError && (

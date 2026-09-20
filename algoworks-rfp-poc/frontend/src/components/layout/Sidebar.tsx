@@ -1,34 +1,46 @@
 import { FilePlus2, FolderKanban } from 'lucide-react'
+import type { AppView } from '../../App'
 import './Sidebar.css'
 
 interface SidebarProps {
   backendOnline: boolean
+  activeView: AppView
+  onNavigate: (view: 'home' | 'my-projects') => void
 }
 
-const NAV_ITEMS = [
-  { id: 'new-request', label: 'Nueva solicitud', icon: FilePlus2, active: true },
-  { id: 'my-projects', label: 'Mis proyectos', icon: FolderKanban, active: false },
+const NAV_ITEMS: { id: 'home' | 'my-projects'; label: string; icon: typeof FilePlus2; isActive: (view: AppView) => boolean }[] = [
+  { id: 'home', label: 'Nueva solicitud', icon: FilePlus2, isActive: (view) => view !== 'my-projects' },
+  { id: 'my-projects', label: 'Mis proyectos', icon: FolderKanban, isActive: (view) => view === 'my-projects' },
 ]
 
 /** Fixed 240px dark rail - identical across every screen. */
-export function Sidebar({ backendOnline }: SidebarProps) {
+export function Sidebar({ backendOnline, activeView, onNavigate }: SidebarProps) {
   return (
     <aside className="td-sidebar">
       <div>
         <div className="td-sidebar__brand">
-          <span className="td-sidebar__mark" aria-hidden="true" />
-          <span className="text-h3 td-sidebar__wordmark">Trace Desk</span>
+          <span className="td-sidebar__mark" aria-hidden="true">
+            TD
+          </span>
+          <span className="td-sidebar__wordmark">Trace Desk</span>
         </div>
         <p className="text-caption td-sidebar__tagline">Know where every answer comes from.</p>
 
         <nav className="td-sidebar__nav">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
+            const isActive = item.isActive(activeView)
             return (
-              <div key={item.id} className={`td-sidebar__nav-item ${item.active ? 'is-active' : ''}`}>
+              <button
+                key={item.id}
+                type="button"
+                className={`td-sidebar__nav-item ${isActive ? 'is-active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => onNavigate(item.id)}
+              >
                 <Icon />
                 <span className="text-body">{item.label}</span>
-              </div>
+              </button>
             )
           })}
         </nav>

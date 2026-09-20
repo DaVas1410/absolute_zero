@@ -12,7 +12,7 @@
   font-size: 14px;
   line-height: 22px;
   color: var(--ink);
-  background: var(--surface);
+  background: var(--surface-raised);
 }
 
 .td-input-panel__textarea::placeholder {
@@ -28,6 +28,6 @@
   right: var(--space-3);
   bottom: var(--space-2);
   color: var(--ink-subtle);
-  background: var(--surface);
+  background: var(--surface-raised);
   padding: 0 var(--space-1);
 }

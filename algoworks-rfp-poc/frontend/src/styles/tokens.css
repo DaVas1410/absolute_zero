@@ -1,52 +1,60 @@
 /*
  * Trace Desk design tokens.
- * Source of truth: frontend/trace-desk-design-reference.md (now at
- * ~/Downloads/trace-desk-design-reference.md — same content, relocated).
- * Token names below match that document's token column exactly.
+ *
+ * Concept: an evidentiary case desk, not a SaaS dashboard. The working
+ * surfaces read like ledger paper; the sidebar reads like a dark leather
+ * blotter; verification carries two distinct inks - a brass seal for
+ * claims that hold up, an oxblood mark for ones that don't - rather than
+ * generic traffic-light green/amber.
  */
 
 :root {
-  /* Surfaces & structure */
-  --surface: #ffffff;
-  --surface-sunken: #f8fafc;
-  --surface-raised: #ffffff;
-  --surface-sidebar: #0f1b2d;
-  --surface-sidebar-hover: #16253d;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  /* Surfaces & structure - warm paper, not cool SaaS gray */
+  --surface: #f6f2e7;
+  --surface-sunken: #eae3ce;
+  --surface-raised: #fffdf8;
+  --surface-sidebar: #1c1911;
+  --surface-sidebar-hover: #2b2519;
+  --border: #dcd3b9;
+  --border-strong: #c3b896;
 
-  /* Text */
-  --ink: #0f172a;
-  --ink-muted: #475569;
-  --ink-subtle: #64748b;
-  --ink-on-sidebar: #e6ebf3;
-  --ink-on-sidebar-muted: #94a3b8;
-  --ink-placeholder: #94a3b8;
+  /* Text - ink on paper */
+  --ink: #211d16;
+  --ink-muted: #5b5442;
+  --ink-subtle: #857c64;
+  --ink-on-sidebar: #ede7d6;
+  --ink-on-sidebar-muted: #9c927a;
+  --ink-placeholder: #a89d80;
 
-  /* Brand & actions */
-  --brand: #dc2626;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
+  /* Brand & actions - a brass seal, not corporate blue */
+  --brand: #c79a44;
+  --primary: #8b5a20;
+  --primary-hover: #6e4718;
   --primary-on: #ffffff;
-  --primary-subtle: #eff6ff;
-  --primary-subtle-border: #bfdbfe;
-  --primary-subtle-ink: #1d4ed8;
+  --primary-subtle: #f1e4c7;
+  --primary-subtle-border: #dfc48d;
+  --primary-subtle-ink: #6e4718;
 
-  /* Status - the verification pair */
-  --success: #15803d;
-  --success-subtle: #f0fdf4;
-  --success-subtle-border: #bbf7d0;
-  --caution: #b45309;
-  --caution-subtle: #fffbeb;
-  --caution-subtle-border: #fde68a;
-  --neutral-subtle: #f1f5f9;
-  --neutral-subtle-ink: #334155;
-  --neutral-subtle-border: #e2e8f0;
-  --overlay-scrim: rgba(15, 23, 42, 0.36);
+  /* Status - the verification pair: a wax-seal green vs. a red-pen mark */
+  --success: #2f6b45;
+  --success-subtle: #e6eee0;
+  --success-subtle-border: #bfd4b2;
+  --caution: #9c3b2e;
+  --caution-subtle: #f3e1d8;
+  --caution-subtle-border: #dfb6a4;
+  --neutral-subtle: #eae3ce;
+  --neutral-subtle-ink: #5b5442;
+  --neutral-subtle-border: #dcd1ae;
+  --overlay-scrim: rgba(28, 25, 20, 0.42);
 
-  /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  /* Typography - three families, each doing one job:
+     sans for the instrument (chrome/UI), serif for the deliverable
+     (proposal/requirement content, built for citation-heavy text),
+     mono for data (ids, scores, timestamps). */
+  --font-sans: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'STIX Two Text', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   /* Spacing (4px-rooted) */
   --space-1: 4px;
@@ -60,14 +68,14 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Radius - hairline-and-paper, not rounded-card-kit */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
   --radius-pill: 999px;
 
-  /* Shadow */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.16);
+  /* Shadow - warm, restrained */
+  --shadow-sm: 0 1px 2px rgba(33, 29, 22, 0.09);
+  --shadow-md: 0 6px 16px rgba(33, 29, 22, 0.1);
+  --shadow-lg: 0 22px 48px rgba(33, 29, 22, 0.24);
 }

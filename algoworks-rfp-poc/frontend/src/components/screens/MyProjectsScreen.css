@@ -1,0 +1,123 @@
+.td-my-projects {
+  max-width: 820px;
+}
+
+.td-my-projects__hero {
+  margin-bottom: var(--space-12);
+}
+
+.td-my-projects__hero-sub {
+  color: var(--ink-muted);
+  margin-top: var(--space-2);
+  max-width: 560px;
+}
+
+.td-my-projects__card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.td-my-projects__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.td-my-projects__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.td-my-projects__label {
+  color: var(--ink-subtle);
+}
+
+.td-my-projects__text-input,
+.td-my-projects__select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-raised);
+}
+
+.td-my-projects__text-input:hover,
+.td-my-projects__select:hover {
+  border-color: var(--border-strong);
+}
+
+.td-my-projects__file-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.td-my-projects__file-name {
+  color: var(--ink-subtle);
+}
+
+.td-my-projects__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.td-my-projects__spinner {
+  animation: td-spin 1s linear infinite;
+}
+
+.td-my-projects__log-title {
+  margin: 0 0 var(--space-3);
+}
+
+.td-my-projects__log-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.td-my-projects__log-entry + .td-my-projects__log-entry {
+  margin-top: var(--space-2);
+}
+
+.td-my-projects__log-icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.75;
+  color: var(--ink-subtle);
+  flex-shrink: 0;
+}
+
+.td-my-projects__log-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.td-my-projects__log-source {
+  color: var(--ink);
+}
+
+.td-my-projects__log-meta {
+  color: var(--ink-subtle);
+}
+
+@media (max-width: 600px) {
+  .td-my-projects__row {
+    grid-template-columns: 1fr;
+  }
+}

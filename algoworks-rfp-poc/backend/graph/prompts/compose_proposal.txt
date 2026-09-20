@@ -9,7 +9,7 @@ Estructura obligatoria del documento, en este orden (nunca uses los identificado
 
 1. Carta de presentación — breve, sin citas.
 2. Entendimiento del problema — resume lo que pide el RFP, sin citas.
-3. Solución propuesta — la sección principal, basada en los borradores verificados y sus citas.
+3. Solución propuesta — la sección principal, basada en los borradores verificados y sus citas. Ver instrucción especial abajo.
 4. Enfoque de implementación — ver instrucción especial abajo.
 5. Equipo propuesto — ver instrucción especial abajo.
 6. Seguridad y gobierno de datos — sin citas, salvo que un borrador ya cite algo directamente relevante.
@@ -21,6 +21,11 @@ Estructura obligatoria del documento, en este orden (nunca uses los identificado
 12. Próximos pasos — sin citas.
 
 Si para un tema puntual dentro de una de estas secciones no hay evidencia verificada disponible en los borradores, decilo explícitamente como "pendiente de validación" — pero la sección completa NUNCA debe reducirse a esa única frase (ver instrucción especial de "Enfoque de implementación", "Equipo propuesto" y "Términos comerciales y SLA propuesto": ahí la resolución correcta es una plantilla con placeholders, no una frase de una línea).
+
+Instrucción especial para "Solución propuesta": es el corazón del documento y debe leerse como una única narrativa de solución integrada — no como respuestas separadas, una por cada requisito.
+- Abrí con 1-2 oraciones que planteen la propuesta de valor global: cómo las distintas capacidades encajan en una sola solución coherente para este cliente. Esa oración de apertura es de encuadre, no puede introducir afirmaciones factuales nuevas sin cita.
+- Si usás subtítulos internos para organizar los temas, nombrá la capacidad o el tema (p. ej. "Pipelines de MLOps", "Recuperación aumentada por IA"). Nunca uses el identificador del requisito como subtítulo ni lo menciones en el texto ("REQ1", "R1", "Requisito 2", etc.) — es un identificador interno del pipeline, no contenido para el cliente.
+- Cerrá con una oración breve que conecte los temas entre sí (p. ej. cómo el pipeline de datos, el equipo y la arquitectura trabajan juntos como una sola oferta), sin agregar afirmaciones no citadas.
 
 Instrucción especial para "Enfoque de implementación", "Equipo propuesto" y "Términos comerciales y SLA propuesto": el corpus disponible no trae esta información todavía. NO la inventes. En su lugar, generá una plantilla concreta y accionable con placeholders entre corchetes que el equipo comercial completará antes de enviar la propuesta. Ejemplos de formato esperado (adaptá el contenido, no copies estos ejemplos literalmente):
 - "Fase 1 — Diagnóstico: [duración]. Fase 2 — Piloto: [duración]. Fase 3 — Despliegue: [duración]. Metodología: [ágil por sprints / hitos waterfall]. Validación del requisito de latencia: [cómo se probará en el entorno del cliente]."
@@ -35,5 +40,6 @@ Reglas estrictas (aplican a toda sección que haga afirmaciones factuales sobre 
 - No incluyas afirmaciones factuales que no estén presentes en los borradores de entrada. Si un requisito tiene "problemas conocidos" listados, no repitas ni reformules esa frase problemática — omitila directamente.
 - Podés reformular y reorganizar el texto para que fluya como un documento único y profesional, pero cada afirmación factual debe seguir citando el mismo [[chunk_id]] que tenía en el borrador original de origen.
 - Nunca describas a Algoworks con adjetivos genéricos sueltos ("experiencia técnica profunda", "trayectoria sólida") sin anclarlos a un hecho citado — si afirmás algo, citá el dato concreto que lo respalda.
+- Nunca expongas identificadores internos del pipeline en el texto visible de ninguna sección (req_id como "REQ1"/"R1", chunk_id mencionado fuera del marcador [[chunk_id]], etc.) — son metadata interna, no contenido para el cliente.
 
 Para cada sección, indica también qué req_id(s) del RFP alimentaron su contenido (source_req_ids; lista vacía para las secciones que no se basan en un requisito específico).

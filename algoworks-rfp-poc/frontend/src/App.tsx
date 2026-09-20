@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
-import { checkHealth, composeProposal, processRfp, processRfpPdf } from './api/client'
-import type { PipelineResult, ProposalDocument } from './api/types'
+import { checkHealth, composeProposal, runRfpPipeline, startRfpProcess, startRfpProcessPdf } from './api/client'
+import type { PipelineResult, ProposalDocument, TraceEvent } from './api/types'
 import { Shell } from './components/layout/Shell'
 import { HomeScreen } from './components/screens/HomeScreen'
+import { MyProjectsScreen } from './components/screens/MyProjectsScreen'
 import { ProcessingScreen } from './components/screens/ProcessingScreen'
 import { ResultsScreen } from './components/screens/results/ResultsScreen'
 
-type AppView = 'home' | 'processing' | 'results'
+export type AppView = 'home' | 'processing' | 'results' | 'my-projects'
 
 export default function App() {
   const [view, setView] = useState<AppView>('home')
@@ -15,9 +16,13 @@ export default function App() {
   const [pipelineResult, setPipelineResult] = useState<PipelineResult | null>(null)
   const [processError, setProcessError] = useState<string | null>(null)
   const [isSettled, setIsSettled] = useState(false)
+  const [liveTraceLog, setLiveTraceLog] = useState<TraceEvent[]>([])
   const [proposalDocument, setProposalDocument] = useState<ProposalDocument | null>(null)
   const [proposalError, setProposalError] = useState<string | null>(null)
   const [isComposing, setIsComposing] = useState(false)
+  // Guards against a poll loop from an abandoned run (user started a new
+  // request before the previous one settled) still writing into state.
+  const activeRunRef = useRef(0)
 
   useEffect(() => {
     checkHealth().then(setBackendOnline)
@@ -43,31 +48,41 @@ export default function App() {
     }
   }
 
-  async function runPipeline(run: (rfpId: string) => Promise<PipelineResult>) {
+  async function runPipeline(start: (rfpId: string) => Promise<{ rfp_id: string; status: string }>) {
+    const runId = ++activeRunRef.current
     setView('processing')
     setIsSettled(false)
     setProcessError(null)
     setProposalDocument(null)
     setProposalError(null)
+    setLiveTraceLog([])
     const rfpId = `rfp_${crypto.randomUUID().slice(0, 8)}`
     try {
-      const result = await run(rfpId)
+      const result = await runRfpPipeline(
+        () => start(rfpId),
+        rfpId,
+        (traceLog) => {
+          if (activeRunRef.current === runId) setLiveTraceLog(traceLog)
+        },
+      )
+      if (activeRunRef.current !== runId) return
       setPipelineResult(result)
       setIsSettled(true)
       setView('results')
       void composeInBackground(rfpId)
     } catch (err) {
+      if (activeRunRef.current !== runId) return
       setProcessError(err instanceof Error ? err.message : 'Ha ocurrido un error inesperado.')
       setIsSettled(true)
     }
   }
 
   function handleSubmit(rfpText: string) {
-    return runPipeline((rfpId) => processRfp(rfpId, rfpText))
+    return runPipeline((rfpId) => startRfpProcess(rfpId, rfpText))
   }
 
   function handleSubmitFile(file: File) {
-    return runPipeline((rfpId) => processRfpPdf(rfpId, file))
+    return runPipeline((rfpId) => startRfpProcessPdf(rfpId, file))
   }
 
   function handleRegenerateProposal() {
@@ -75,10 +90,26 @@ export default function App() {
     void composeInBackground(pipelineResult.rfp_id)
   }
 
+  function handleNavigate(target: 'home' | 'my-projects') {
+    if (target === 'my-projects') {
+      setView('my-projects')
+      return
+    }
+    // "Nueva solicitud" always starts a fresh request, even mid-pipeline.
+    setPipelineResult(null)
+    setProcessError(null)
+    setProposalDocument(null)
+    setProposalError(null)
+    setView('home')
+  }
+
   return (
-    <Shell backendOnline={backendOnline}>
+    <Shell backendOnline={backendOnline} activeView={view} onNavigate={handleNavigate}>
       {view === 'home' && <HomeScreen onSubmit={handleSubmit} onSubmitFile={handleSubmitFile} />}
-      {view === 'processing' && <ProcessingScreen isSettled={isSettled} hasError={Boolean(processError)} />}
+      {view === 'my-projects' && <MyProjectsScreen />}
+      {view === 'processing' && (
+        <ProcessingScreen isSettled={isSettled} hasError={Boolean(processError)} traceLog={liveTraceLog} />
+      )}
       {view === 'results' && pipelineResult && (
         <ResultsScreen
           result={pipelineResult}

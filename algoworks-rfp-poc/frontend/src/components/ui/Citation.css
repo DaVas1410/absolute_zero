@@ -1,22 +1,29 @@
+/* A footnote reference, not a chat-app chip: an outlined numeral that
+   fills solid brass only once you've actually opened the source. */
 .td-citation {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
   margin: 0 1px;
-  border-radius: var(--radius-pill);
-  background: var(--primary-subtle);
-  border: 1px solid var(--primary-subtle-border);
-  color: var(--primary-subtle-ink);
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--primary);
+  font-family: var(--font-serif);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
   vertical-align: super;
 }
 
-.td-citation:hover,
+.td-citation:hover {
+  border-color: var(--primary);
+  background: var(--primary-subtle);
+}
+
 .td-citation.is-selected {
   background: var(--primary);
   border-color: var(--primary);

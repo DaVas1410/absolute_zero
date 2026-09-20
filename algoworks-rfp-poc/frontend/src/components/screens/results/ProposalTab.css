@@ -1,3 +1,69 @@
+/* The document's frontispiece - the one place this tab is allowed to be
+   the deliverable rather than a QA view of it. The seal only appears in
+   internal view: client copy never surfaces a verification score. */
+.td-proposal-tab__cover {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.td-proposal-tab__cover-date {
+  color: var(--ink-muted);
+  margin: var(--space-2) 0 0;
+}
+
+.td-proposal-tab__seal {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 2px solid var(--success);
+  background: var(--success-subtle);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.td-proposal-tab__seal.is-partial {
+  border-color: var(--caution);
+  background: var(--caution-subtle);
+}
+
+.td-proposal-tab__seal-count {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.td-proposal-tab__seal.is-partial .td-proposal-tab__seal-count {
+  color: var(--caution);
+}
+
+.td-proposal-tab__seal-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--success);
+}
+
+.td-proposal-tab__seal.is-partial .td-proposal-tab__seal-label {
+  color: var(--caution);
+}
+
+@media (max-width: 900px) {
+  .td-proposal-tab__cover {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .td-proposal-tab__empty {
   display: flex;
   flex-direction: column;

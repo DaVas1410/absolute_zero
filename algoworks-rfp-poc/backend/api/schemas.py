@@ -172,6 +172,18 @@ class ProposalDocument(BaseModel):
     metrics: ComposeMetrics
 
 
+class RfpProgress(BaseModel):
+    """Progreso en vivo de un POST /rfp/process/start, consultado via
+    GET /rfp/{rfp_id}/progress mientras el pipeline corre en un hilo de
+    fondo. `trace_log` crece a medida que cada nodo del grafo termina."""
+
+    rfp_id: str
+    status: Literal["running", "done", "error"]
+    trace_log: list[TraceEvent] = []
+    result: PipelineResult | None = None
+    error: str | None = None
+
+
 class TraceabilityReport(BaseModel):
     """Reporte agregado de trazabilidad para un rfp_id ya procesado: cobertura
     de citas por requisito (código-only, calculado una vez en
